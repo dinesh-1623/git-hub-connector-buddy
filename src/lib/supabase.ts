@@ -1,15 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key';
+const supabaseUrl = 'https://ebcrcsiepxuowptxkwmd.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViY3Jjc2llcHh1b3dwdHhrd21kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNjQ4MjEsImV4cCI6MjA2NTk0MDgyMX0.pydjUXA9bKsVb0sPO26oZw_Rub-olu8-VeSJD8fTQ28';
 
 // Check if we have real Supabase credentials
-export const hasSupabaseConfig = !!(
-  import.meta.env.VITE_SUPABASE_URL && 
-  import.meta.env.VITE_SUPABASE_ANON_KEY &&
-  import.meta.env.VITE_SUPABASE_URL !== 'https://placeholder.supabase.co' &&
-  import.meta.env.VITE_SUPABASE_ANON_KEY !== 'placeholder-key'
-);
+export const hasSupabaseConfig = !!(supabaseUrl && supabaseAnonKey);
 
 console.log('🔍 Supabase Config Check:', {
   hasConfig: hasSupabaseConfig,
