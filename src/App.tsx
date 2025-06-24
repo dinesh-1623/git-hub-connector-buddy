@@ -51,6 +51,15 @@ const SupabaseSetupPage: React.FC = () => {
 const AppContent: React.FC = () => {
   const { user, profile, loading } = useAuth();
 
+  // Debug current auth state
+  console.log('🔍 App: Current auth state:', {
+    user: !!user,
+    profile: !!profile,
+    loading,
+    userRole: profile?.role,
+    hasSupabaseConfig
+  });
+
   // Check if Supabase is configured
   if (!hasSupabaseConfig) {
     console.log('⚠️ App: Supabase not configured, showing setup page');
@@ -59,6 +68,7 @@ const AppContent: React.FC = () => {
 
   // Show loading screen while checking authentication
   if (loading) {
+    console.log('🔍 App: Still loading auth state, showing loading screen');
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -79,11 +89,16 @@ const AppContent: React.FC = () => {
 
   // Show sign-in page if not authenticated
   if (!user || !profile) {
+    console.log('🔍 App: User not authenticated, showing sign-in page', {
+      hasUser: !!user,
+      hasProfile: !!profile
+    });
     return <SignInPage />;
   }
 
   // Check if user has teacher/admin role for grades page
   if (profile.role !== 'teacher' && profile.role !== 'admin') {
+    console.log('🔍 App: User does not have required role:', profile.role);
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center py-12">
@@ -97,6 +112,7 @@ const AppContent: React.FC = () => {
     );
   }
 
+  console.log('✅ App: User authenticated and authorized, showing main app');
   return (
     <Routes>
       <Route path="/grade-assignments" element={<GradesAssignmentsPage />} />

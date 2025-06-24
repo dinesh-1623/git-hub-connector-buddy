@@ -87,6 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('🔍 AuthContext: Auth state change event:', event, 'Session valid:', !!session);
+      console.log('🔍 AuthContext: Session details:', session ? { user_id: session.user?.id, expires_at: session.expires_at } : 'No session');
       
       // Special handling for token refresh failures
       if (event === 'TOKEN_REFRESHED' && !session) {
@@ -251,6 +252,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const handleAuthStateChange = async (event: string, session: Session | null) => {
     console.log('🔍 AuthContext: Auth state changed:', event, 'Session:', !!session);
+    console.log('🔍 AuthContext: Current loading state:', loading);
+    console.log('🔍 AuthContext: Current user state:', !!user);
+    console.log('🔍 AuthContext: Current profile state:', !!profile);
     
     // Handle session expiry or failed refresh
     if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' && !session) {
@@ -274,6 +278,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Handle successful authentication
     if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
       console.log('🔍 AuthContext: User authenticated successfully');
+      console.log('🔍 AuthContext: Setting session and user state');
+      
       setSession(session);
       setUser(session.user);
       
@@ -282,6 +288,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const profileData = await fetchProfile(session.user.id, session.user.email, session.user);
         console.log('🔍 AuthContext: Profile data received:', profileData);
         setProfile(profileData);
+        
+        // Add explicit state update logging
+        console.log('🔍 AuthContext: Final auth state after login:', {
+          user: !!session.user,
+          profile: !!profileData,
+          session: !!session,
+          loading: false
+        });
       }
     }
     
@@ -301,6 +315,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     }
     
+    console.log('🔍 AuthContext: Setting loading to false');
     setLoading(false);
   };
 
@@ -314,6 +329,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
     
     try {
+      console.log('🔍 AuthContext: Calling supabase.auth.signInWithPassword');
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -323,7 +339,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.error('❌ AuthContext: Sign in error:', error);
         toast.error(error.message);
       } else {
-        console.log('✅ AuthContext: Sign in successful');
+        console.log('✅ AuthContext: Sign in successful - auth state change should trigger automatically');
         toast.success('Successfully signed in!');
       }
 
@@ -401,6 +417,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }, 100);
     }
   };
+
+  // Debug the current state
+  useEffect(() => {
+    console.log('🔍 AuthContext: State update:', {
+      user: !!user,
+      profile: !!profile,
+      session: !!session,
+      loading,
+      userRole: profile?.role
+    });
+  }, [user, profile, session, loading]);
 
   const value = {
     user,
