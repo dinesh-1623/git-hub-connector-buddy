@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/context/AuthContext';
+import { hasSupabaseConfig } from '@/lib/supabase';
 
 const signInSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -34,6 +35,14 @@ const SignInPage: React.FC = () => {
 
   const onSubmit = async (data: SignInFormData) => {
     console.log('🔍 SignInPage: Attempting sign in with:', data.email);
+    
+    if (!hasSupabaseConfig) {
+      setError('root', {
+        message: 'Authentication service is not configured. Please contact your administrator.',
+      });
+      return;
+    }
+    
     setIsLoading(true);
     
     try {

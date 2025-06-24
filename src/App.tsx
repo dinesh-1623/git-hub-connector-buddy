@@ -1,15 +1,61 @@
+
 import React from 'react';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import SignInPage from './pages/SignInPage';
 import GradesAssignmentsPage from './components/grades/GradesAssignmentsPage';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, AlertCircle } from 'lucide-react';
+import { hasSupabaseConfig } from '@/lib/supabase';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import './App.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
+const SupabaseSetupPage: React.FC = () => {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <div className="p-3 bg-amber-100 rounded-xl">
+              <AlertCircle className="h-8 w-8 text-amber-600" />
+            </div>
+          </div>
+          <CardTitle>Setup Required</CardTitle>
+          <CardDescription>
+            Supabase configuration is required to use this application
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="text-sm text-muted-foreground space-y-2">
+            <p>To get started, you need to:</p>
+            <ol className="list-decimal list-inside space-y-1 ml-2">
+              <li>Connect your project to Supabase</li>
+              <li>Set up your database schema</li>
+              <li>Configure authentication</li>
+            </ol>
+          </div>
+          <Button
+            onClick={() => window.open('https://docs.lovable.dev/integrations/supabase/', '_blank')}
+            className="w-full"
+          >
+            View Setup Instructions
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 const AppContent: React.FC = () => {
   const { user, profile, loading } = useAuth();
+
+  // Check if Supabase is configured
+  if (!hasSupabaseConfig) {
+    console.log('⚠️ App: Supabase not configured, showing setup page');
+    return <SupabaseSetupPage />;
+  }
 
   // Show loading screen while checking authentication
   if (loading) {

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { supabase, hasSupabaseConfig } from '@/lib/supabase';
 import { toast } from 'sonner';
 
 interface Profile {
@@ -48,6 +48,65 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const fetchingProfile = useRef(false);
   const initializedRef = useRef(false);
   const redirectingRef = useRef(false);
+
+  // Early return if Supabase is not configured
+  useEffect(() => {
+    console.log('🔍 AuthContext: Checking Supabase configuration');
+    
+    if (!hasSupabaseConfig) {
+      console.log('⚠️ AuthContext: Supabase not configured, skipping auth initialization');
+      setLoading(false);
+      return;
+    }
+
+    // Prevent multiple initializations
+    if (initializedRef.current) {
+      console.log('🔍 AuthContext: Already initialized, skipping');
+      return;
+    }
+
+    console.log('🔍 AuthContext: Initializing auth state');
+    initializedRef.current = true;
+    
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      console.log('🔍 AuthContext: Initial session check:', !!session, error);
+      
+      if (error) {
+        console.error('❌ AuthContext: Error getting initial session:', error);
+        setLoading(false);
+        return;
+      }
+      
+      // Trigger initial session handling
+      handleAuthStateChange('INITIAL_SESSION', session);
+    });
+
+    // Listen for auth changes with enhanced error handling
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('🔍 AuthContext: Auth state change event:', event, 'Session valid:', !!session);
+      
+      // Special handling for token refresh failures
+      if (event === 'TOKEN_REFRESHED' && !session) {
+        console.error('❌ AuthContext: Token refresh failed - session is null');
+        toast.error('Your session has expired. Please sign in again.');
+        redirectToLogin();
+        return;
+      }
+      
+      handleAuthStateChange(event, session);
+    });
+
+    return () => {
+      console.log('🔍 AuthContext: Cleaning up auth subscription');
+      subscription.unsubscribe();
+      initializedRef.current = false;
+      fetchingProfile.current = false;
+      redirectingRef.current = false;
+    };
+  }, []); // Empty dependency array to run only once
 
   const createDefaultProfile = async (userId: string, userEmail: string, user: User) => {
     console.log('🔍 AuthContext: Creating default profile for user:', userId);
@@ -245,58 +304,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    // Prevent multiple initializations
-    if (initializedRef.current) {
-      console.log('🔍 AuthContext: Already initialized, skipping');
-      return;
-    }
-
-    console.log('🔍 AuthContext: Initializing auth state');
-    initializedRef.current = true;
-    
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      console.log('🔍 AuthContext: Initial session check:', !!session, error);
-      
-      if (error) {
-        console.error('❌ AuthContext: Error getting initial session:', error);
-        setLoading(false);
-        return;
-      }
-      
-      // Trigger initial session handling
-      handleAuthStateChange('INITIAL_SESSION', session);
-    });
-
-    // Listen for auth changes with enhanced error handling
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('🔍 AuthContext: Auth state change event:', event, 'Session valid:', !!session);
-      
-      // Special handling for token refresh failures
-      if (event === 'TOKEN_REFRESHED' && !session) {
-        console.error('❌ AuthContext: Token refresh failed - session is null');
-        toast.error('Your session has expired. Please sign in again.');
-        redirectToLogin();
-        return;
-      }
-      
-      handleAuthStateChange(event, session);
-    });
-
-    return () => {
-      console.log('🔍 AuthContext: Cleaning up auth subscription');
-      subscription.unsubscribe();
-      initializedRef.current = false;
-      fetchingProfile.current = false;
-      redirectingRef.current = false;
-    };
-  }, []); // Empty dependency array to run only once
-
   const signIn = async (email: string, password: string) => {
     console.log('🔍 AuthContext: Attempting sign in for:', email);
+    
+    if (!hasSupabaseConfig) {
+      const error = new Error('Supabase is not configured. Please set up your Supabase credentials.') as AuthError;
+      toast.error('Authentication service not configured');
+      return { error };
+    }
     
     try {
       const { error } = await supabase.auth.signInWithPassword({
@@ -323,6 +338,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signOut = async () => {
     console.log('🔍 AuthContext: Attempting comprehensive sign out');
+    
+    if (!hasSupabaseConfig) {
+      // Just clear local state if no Supabase config
+      clearAuthState();
+      setLoading(false);
+      toast.success('Signed out locally');
+      return;
+    }
     
     try {
       // Clear local state immediately
