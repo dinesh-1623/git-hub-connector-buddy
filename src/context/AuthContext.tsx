@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase, hasSupabaseConfig } from '@/lib/supabase';
@@ -147,7 +146,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return fallbackProfile;
   };
 
-  const createDefaultProfile = async (userId: string, userEmail: string, user: User) => {
+  const createDefaultProfile = async (userId: string, user: User) => {
     console.log('🔍 AuthContext: Creating default profile for user:', userId);
     
     try {
@@ -204,9 +203,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.error('❌ AuthContext: Error fetching profile:', error);
         
         // If profile doesn't exist (PGRST116), create a default one
-        if (error.code === 'PGRST116' && userEmail && user) {
+        if (error.code === 'PGRST116' && user) {
           console.log('🔍 AuthContext: Profile not found, creating default profile');
-          const newProfile = await createDefaultProfile(userId, userEmail, user);
+          const newProfile = await createDefaultProfile(userId, user);
           fetchingProfile.current = false;
           return newProfile;
         }
