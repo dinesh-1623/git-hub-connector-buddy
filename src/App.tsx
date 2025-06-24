@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
@@ -18,7 +19,10 @@ import './App.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import GradesAssignmentsPage from './components/grades/GradesAssignmentsPage';
 
+console.log('🚀 App.tsx: Starting application initialization');
+
 const SupabaseSetupPage: React.FC = () => {
+  console.log('🔧 App: Rendering Supabase setup page');
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -55,6 +59,7 @@ const SupabaseSetupPage: React.FC = () => {
 };
 
 const MessagesPage: React.FC = () => {
+  console.log('📧 App: Rendering Messages page');
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Messages</h1>
@@ -64,6 +69,7 @@ const MessagesPage: React.FC = () => {
 };
 
 const DiscussionsPage: React.FC = () => {
+  console.log('💬 App: Rendering Discussions page');
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Discussions</h1>
@@ -80,7 +86,8 @@ const AppContent: React.FC = () => {
     profile: !!profile,
     loading,
     userRole: profile?.role,
-    hasSupabaseConfig
+    hasSupabaseConfig,
+    timestamp: new Date().toISOString()
   });
 
   if (!hasSupabaseConfig) {
@@ -110,7 +117,7 @@ const AppContent: React.FC = () => {
 
   // If user exists but no profile (due to missing profiles table), use fallback routing
   if (user && !profile) {
-    console.log('🔍 App: User exists but no profile, using fallback');
+    console.log('🔍 App: User exists but no profile, using fallback routing');
     
     return (
       <Routes>
@@ -136,7 +143,7 @@ const AppContent: React.FC = () => {
     return <SignInPage />;
   }
 
-  console.log('✅ App: User authenticated, showing interface for role:', profile?.role);
+  console.log('✅ App: User authenticated, rendering main application');
   return (
     <Routes>
       <Route path="/" element={<AdminLayout />}>
@@ -157,12 +164,41 @@ const AppContent: React.FC = () => {
 };
 
 function App() {
-  return (
-    <AuthProvider>
-      <AppContent />
-      <Toaster position="top-right" richColors />
-    </AuthProvider>
-  );
+  console.log('🚀 App: Main App component rendering');
+  
+  try {
+    return (
+      <AuthProvider>
+        <AppContent />
+        <Toaster position="top-right" richColors />
+      </AuthProvider>
+    );
+  } catch (error) {
+    console.error('❌ App: Critical error in App component:', error);
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle>Application Error</CardTitle>
+            <CardDescription>
+              Something went wrong loading the application
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Please refresh the page or contact support if the issue persists.
+            </p>
+            <Button 
+              onClick={() => window.location.reload()} 
+              className="w-full mt-4"
+            >
+              Refresh Page
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 }
 
 export default App;
