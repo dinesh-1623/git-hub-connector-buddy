@@ -99,7 +99,7 @@ const getQuickActions = (userRole: string) => {
   const baseActions = [
     {
       title: 'Create Course',
-      url: '/courses/create',
+      url: '/courses',
       icon: Plus,
     },
   ];
@@ -108,13 +108,13 @@ const getQuickActions = (userRole: string) => {
   if (userRole === 'admin' || userRole === 'teacher') {
     baseActions.unshift({
       title: 'Add User',
-      url: '/users/create',
+      url: '/users',
       icon: UserPlus,
     });
     
     baseActions.push({
       title: 'Generate Report',
-      url: '/reports/generate',
+      url: '/reports',
       icon: FileText,
     });
   }
@@ -128,6 +128,9 @@ export function AdminSidebar() {
   
   const navigationItems = getNavigationItems(profile?.role || 'student');
   const quickActions = getQuickActions(profile?.role || 'student');
+
+  console.log('Current location:', location.pathname);
+  console.log('Navigation items:', navigationItems);
 
   return (
     <Sidebar>
@@ -213,13 +216,17 @@ export function AdminSidebar() {
               <DropdownMenuContent side="top" className="w-[--radix-dropdown-menu-trigger-width]">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <User className="h-4 w-4 mr-2" />
-                  Profile
+                <DropdownMenuItem asChild>
+                  <Link to="/settings">
+                    <User className="h-4 w-4 mr-2" />
+                    Profile
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
+                <DropdownMenuItem asChild>
+                  <Link to="/settings">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Settings
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={signOut}>

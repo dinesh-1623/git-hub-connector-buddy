@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
@@ -15,7 +16,7 @@ import { hasSupabaseConfig } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import './App.css';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
 import GradesAssignmentsPage from './components/grades/GradesAssignmentsPage';
 
 const SupabaseSetupPage: React.FC = () => {
@@ -50,6 +51,24 @@ const SupabaseSetupPage: React.FC = () => {
           </Button>
         </CardContent>
       </Card>
+    </div>
+  );
+};
+
+const MessagesPage: React.FC = () => {
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Messages</h1>
+      <p className="text-muted-foreground">Coming soon...</p>
+    </div>
+  );
+};
+
+const DiscussionsPage: React.FC = () => {
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Discussions</h1>
+      <p className="text-muted-foreground">Coming soon...</p>
     </div>
   );
 };
@@ -105,26 +124,24 @@ const AppContent: React.FC = () => {
   // Allow all authenticated users to access the application
   console.log('✅ App: User authenticated, showing interface for role:', profile.role);
   return (
-    <Routes>
-      <Route path="/" element={<AdminLayout />}>
-        <Route index element={<Navigate to="/dashboard" replace />} />
-        <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="users" element={<UsersPage />} />
-        <Route path="courses" element={<CoursesPage />} />
-        <Route path="courses/:id" element={<CourseDetailPage />} />
-        <Route path="reports" element={<ReportsPage />} />
-        <Route path="settings" element={<SettingsPage />} />
-        <Route path="grades" element={<GradesAssignmentsPage />} />
-        <Route path="messages" element={<div className="p-6"><h1 className="text-2xl font-bold">Messages</h1><p>Coming soon...</p></div>} />
-        <Route path="discussions" element={<div className="p-6"><h1 className="text-2xl font-bold">Discussions</h1><p>Coming soon...</p></div>} />
-        {/* Quick action routes - redirect to main pages */}
-        <Route path="users/create" element={<Navigate to="/users" replace />} />
-        <Route path="courses/create" element={<Navigate to="/courses" replace />} />
-        <Route path="reports/generate" element={<Navigate to="/reports" replace />} />
-      </Route>
-      {/* Redirect any unknown path to dashboard */}
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
-    </Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<AdminLayout />}>
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="users" element={<UsersPage />} />
+          <Route path="courses" element={<CoursesPage />} />
+          <Route path="courses/:id" element={<CourseDetailPage />} />
+          <Route path="reports" element={<ReportsPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="grades" element={<GradesAssignmentsPage />} />
+          <Route path="messages" element={<MessagesPage />} />
+          <Route path="discussions" element={<DiscussionsPage />} />
+        </Route>
+        {/* Redirect any unknown path to dashboard */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
