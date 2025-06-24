@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,11 +44,11 @@ export default function CoursesPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Courses</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Courses</h1>
+          <p className="text-muted-foreground mt-1">
             Manage courses and educational content
           </p>
         </div>
@@ -67,14 +68,14 @@ export default function CoursesPage() {
         <CardContent>
           <div className="flex items-center gap-4 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search courses..." className="pl-8" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search courses..." className="pl-10" />
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {courses.map((course) => (
-              <Card key={course.id}>
+              <Card key={course.id} className="transition-all hover:shadow-md hover:scale-[1.02]">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <BookOpen className="h-5 w-5 text-primary" />
@@ -82,24 +83,24 @@ export default function CoursesPage() {
                       {course.status}
                     </Badge>
                   </div>
-                  <CardTitle className="text-lg">{course.title}</CardTitle>
-                  <CardDescription>{course.description}</CardDescription>
+                  <CardTitle className="text-lg line-clamp-2">{course.title}</CardTitle>
+                  <CardDescription className="line-clamp-2">{course.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2 text-sm">
+                  <div className="space-y-3 text-sm">
                     <div className="flex items-center text-muted-foreground">
-                      <Users className="h-4 w-4 mr-2" />
-                      {course.students} students
+                      <Users className="h-4 w-4 mr-2 flex-shrink-0" />
+                      <span>{course.students} students</span>
                     </div>
                     <div className="flex items-center text-muted-foreground">
-                      <Clock className="h-4 w-4 mr-2" />
-                      {course.duration}
+                      <Clock className="h-4 w-4 mr-2 flex-shrink-0" />
+                      <span>{course.duration}</span>
                     </div>
                     <div className="text-muted-foreground">
-                      Instructor: {course.instructor}
+                      <span className="font-medium">Instructor:</span> {course.instructor}
                     </div>
                   </div>
-                  <div className="mt-4 pt-4 border-t">
+                  <div className="mt-6 pt-4 border-t">
                     <Button 
                       size="sm" 
                       className="w-full"

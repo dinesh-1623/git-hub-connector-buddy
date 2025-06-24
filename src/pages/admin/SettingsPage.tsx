@@ -9,17 +9,17 @@ import { Settings, Bell, Shield } from 'lucide-react';
 
 export default function SettingsPage() {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Settings</h1>
+          <p className="text-muted-foreground mt-1">
             Manage system configuration and preferences
           </p>
         </div>
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid gap-6 max-w-4xl">
         {/* General Settings */}
         <Card>
           <CardHeader>
@@ -31,16 +31,16 @@ export default function SettingsPage() {
               Basic system configuration
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-2">
+          <CardContent className="space-y-6">
+            <div className="grid gap-3">
               <Label htmlFor="siteName">Site Name</Label>
               <Input id="siteName" defaultValue="DIL Platform" />
             </div>
-            <div className="grid gap-2">
+            <div className="grid gap-3">
               <Label htmlFor="siteDescription">Site Description</Label>
               <Input id="siteDescription" defaultValue="Digital Learning Platform" />
             </div>
-            <div className="grid gap-2">
+            <div className="grid gap-3">
               <Label htmlFor="adminEmail">Admin Email</Label>
               <Input id="adminEmail" type="email" defaultValue="admin@dilplatform.com" />
             </div>
@@ -58,9 +58,9 @@ export default function SettingsPage() {
               Configure system notifications
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 <Label>Email Notifications</Label>
                 <div className="text-sm text-muted-foreground">
                   Send email notifications for important events
@@ -70,7 +70,7 @@ export default function SettingsPage() {
             </div>
             <Separator />
             <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 <Label>Assignment Notifications</Label>
                 <div className="text-sm text-muted-foreground">
                   Notify when assignments are submitted
@@ -80,7 +80,7 @@ export default function SettingsPage() {
             </div>
             <Separator />
             <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 <Label>User Registration Notifications</Label>
                 <div className="text-sm text-muted-foreground">
                   Notify when new users register
@@ -102,9 +102,9 @@ export default function SettingsPage() {
               Security and authentication settings
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 <Label>Two-Factor Authentication</Label>
                 <div className="text-sm text-muted-foreground">
                   Require 2FA for admin accounts
@@ -114,7 +114,7 @@ export default function SettingsPage() {
             </div>
             <Separator />
             <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 <Label>Session Timeout</Label>
                 <div className="text-sm text-muted-foreground">
                   Automatically log out inactive users
@@ -122,7 +122,7 @@ export default function SettingsPage() {
               </div>
               <Switch defaultChecked />
             </div>
-            <div className="grid gap-2">
+            <div className="grid gap-3">
               <Label htmlFor="sessionTimeout">Session Timeout (minutes)</Label>
               <Input id="sessionTimeout" type="number" defaultValue="30" className="w-32" />
             </div>
@@ -131,7 +131,7 @@ export default function SettingsPage() {
 
         {/* Save Button */}
         <div className="flex justify-end">
-          <Button>Save Settings</Button>
+          <Button size="lg">Save Settings</Button>
         </div>
       </div>
     </div>

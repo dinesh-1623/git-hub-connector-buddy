@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -57,7 +58,7 @@ export default function CourseDetailPage() {
 
   if (!course) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div className="flex items-center gap-4">
           <Button variant="outline" onClick={() => navigate('/courses')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -78,19 +79,19 @@ export default function CourseDetailPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+    <div className="space-y-8">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <Button variant="outline" onClick={() => navigate('/courses')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Courses
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{course.title}</h1>
-            <p className="text-muted-foreground">Course Details</p>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{course.title}</h1>
+            <p className="text-muted-foreground mt-1">Course Details</p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <Button variant="outline">
             <Edit className="h-4 w-4 mr-2" />
             Edit Course
@@ -102,8 +103,8 @@ export default function CourseDetailPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-6">
+      <div className="grid gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -114,26 +115,26 @@ export default function CourseDetailPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <h3 className="font-semibold mb-2">Description</h3>
-                  <p className="text-muted-foreground">{course.fullDescription}</p>
+                  <h3 className="font-semibold mb-3">Description</h3>
+                  <p className="text-muted-foreground leading-relaxed">{course.fullDescription}</p>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="font-medium">Instructor</h4>
+                    <h4 className="font-medium mb-1">Instructor</h4>
                     <p className="text-muted-foreground">{course.instructor}</p>
                   </div>
                   <div>
-                    <h4 className="font-medium">Duration</h4>
+                    <h4 className="font-medium mb-1">Duration</h4>
                     <p className="text-muted-foreground">{course.duration}</p>
                   </div>
                   <div>
-                    <h4 className="font-medium">Start Date</h4>
+                    <h4 className="font-medium mb-1">Start Date</h4>
                     <p className="text-muted-foreground">{course.startDate}</p>
                   </div>
                   <div>
-                    <h4 className="font-medium">End Date</h4>
+                    <h4 className="font-medium mb-1">End Date</h4>
                     <p className="text-muted-foreground">{course.endDate}</p>
                   </div>
                 </div>
@@ -179,7 +180,7 @@ export default function CourseDetailPage() {
               <CardTitle>Actions</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Button className="w-full">View Students</Button>
                 <Button variant="outline" className="w-full">Manage Content</Button>
                 <Button variant="outline" className="w-full">View Analytics</Button>
