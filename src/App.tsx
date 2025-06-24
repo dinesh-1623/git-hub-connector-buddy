@@ -4,6 +4,12 @@ import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import SignInPage from './pages/SignInPage';
 import GradesAssignmentsPage from './components/grades/GradesAssignmentsPage';
+import { AdminLayout } from './components/admin/AdminLayout';
+import DashboardPage from './pages/admin/DashboardPage';
+import UsersPage from './pages/admin/UsersPage';
+import CoursesPage from './pages/admin/CoursesPage';
+import ReportsPage from './pages/admin/ReportsPage';
+import SettingsPage from './pages/admin/SettingsPage';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BookOpen, AlertCircle } from 'lucide-react';
 import { hasSupabaseConfig } from '@/lib/supabase';
@@ -96,7 +102,7 @@ const AppContent: React.FC = () => {
     return <SignInPage />;
   }
 
-  // Check if user has teacher/admin role for grades page
+  // Check if user has teacher/admin role for admin features
   if (profile.role !== 'teacher' && profile.role !== 'admin') {
     console.log('🔍 App: User does not have required role:', profile.role);
     return (
@@ -112,12 +118,24 @@ const AppContent: React.FC = () => {
     );
   }
 
-  console.log('✅ App: User authenticated and authorized, showing main app');
+  console.log('✅ App: User authenticated and authorized, showing admin interface');
   return (
     <Routes>
-      <Route path="/grade-assignments" element={<GradesAssignmentsPage />} />
-      {/* Redirect any other path to /grade-assignments if authenticated */}
-      <Route path="*" element={<Navigate to="/grade-assignments" replace />} />
+      <Route path="/" element={<AdminLayout />}>
+        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="courses" element={<CoursesPage />} />
+        <Route path="grade-assignments" element={<GradesAssignmentsPage />} />
+        <Route path="reports" element={<ReportsPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+        {/* Quick action routes */}
+        <Route path="users/create" element={<UsersPage />} />
+        <Route path="courses/create" element={<CoursesPage />} />
+        <Route path="reports/generate" element={<ReportsPage />} />
+      </Route>
+      {/* Redirect any unknown path to dashboard */}
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 };
