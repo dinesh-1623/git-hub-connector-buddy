@@ -1,4 +1,3 @@
-
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -26,7 +25,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import {
   LayoutDashboard,
   Users,
@@ -41,7 +39,6 @@ import {
   MessageCircle,
   GraduationCap,
   BarChart3,
-  Calendar,
   ChevronDown,
 } from 'lucide-react';
 
