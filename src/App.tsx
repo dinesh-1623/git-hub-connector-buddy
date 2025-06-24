@@ -1,9 +1,7 @@
-
 import React from 'react';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import SignInPage from './pages/SignInPage';
-import GradesAssignmentsPage from './components/grades/GradesAssignmentsPage';
 import { AdminLayout } from './components/admin/AdminLayout';
 import DashboardPage from './pages/admin/DashboardPage';
 import UsersPage from './pages/admin/UsersPage';
