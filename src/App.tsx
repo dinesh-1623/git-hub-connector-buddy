@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
@@ -109,17 +108,9 @@ const AppContent: React.FC = () => {
     );
   }
 
-  // If user exists but no profile (due to missing profiles table), create a mock profile
+  // If user exists but no profile (due to missing profiles table), use fallback routing
   if (user && !profile) {
     console.log('🔍 App: User exists but no profile, using fallback');
-    const mockProfile = {
-      id: user.id,
-      full_name: user.email?.split('@')[0] || 'User',
-      role: 'teacher', // Default to teacher role
-      avatar_url: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
     
     return (
       <Routes>

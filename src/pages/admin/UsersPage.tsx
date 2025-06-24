@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,7 +62,6 @@ const users = [
 
 export default function UsersPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
 
   const handleAddUser = () => {
     console.log('Adding new user');
@@ -93,8 +91,7 @@ export default function UsersPage() {
   const filteredUsers = users.filter(user => {
     const searchFilter = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                         user.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const statusFilter = filterStatus === 'all' || user.status === filterStatus;
-    return searchFilter && statusFilter;
+    return searchFilter;
   });
 
   return (
