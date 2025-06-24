@@ -1,4 +1,3 @@
-
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -43,7 +42,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 
-const getMainNavigation = (userRole: string) => [
+const getMainNavigation = () => [
   {
     title: 'Dashboard',
     url: '/dashboard',
@@ -152,7 +151,7 @@ export function AdminSidebar() {
   const location = useLocation();
   const { profile, signOut } = useAuth();
   
-  const mainNavigation = getMainNavigation(profile?.role || 'student');
+  const mainNavigation = getMainNavigation();
   const communicationItems = getCommunicationItems(profile?.role || 'student');
   const managementItems = getManagementItems(profile?.role || 'student');
   const analyticsItems = getAnalyticsItems(profile?.role || 'student');
