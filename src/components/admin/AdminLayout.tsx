@@ -37,55 +37,79 @@ import {
   User,
 } from 'lucide-react';
 
-const navigationItems = [
-  {
-    title: 'Dashboard',
-    url: '/dashboard',
-    icon: LayoutDashboard,
-  },
-  {
-    title: 'Users',
-    url: '/users',
-    icon: Users,
-  },
-  {
-    title: 'Courses',
-    url: '/courses',
-    icon: BookOpen,
-  },
-  {
-    title: 'Reports',
-    url: '/reports',
-    icon: FileText,
-  },
-  {
+const getNavigationItems = (userRole: string) => {
+  const baseItems = [
+    {
+      title: 'Dashboard',
+      url: '/dashboard',
+      icon: LayoutDashboard,
+    },
+    {
+      title: 'Courses',
+      url: '/courses',
+      icon: BookOpen,
+    },
+  ];
+
+  // Add admin/teacher only items
+  if (userRole === 'admin' || userRole === 'teacher') {
+    baseItems.push(
+      {
+        title: 'Users',
+        url: '/users',
+        icon: Users,
+      },
+      {
+        title: 'Reports',
+        url: '/reports',
+        icon: FileText,
+      }
+    );
+  }
+
+  // Always show settings
+  baseItems.push({
     title: 'Settings',
     url: '/settings',
     icon: Settings,
-  },
-];
+  });
 
-const quickActions = [
-  {
-    title: 'Add User',
-    url: '/users/create',
-    icon: UserPlus,
-  },
-  {
-    title: 'Create Course',
-    url: '/courses/create',
-    icon: Plus,
-  },
-  {
-    title: 'Generate Report',
-    url: '/reports/generate',
-    icon: FileText,
-  },
-];
+  return baseItems;
+};
+
+const getQuickActions = (userRole: string) => {
+  const baseActions = [
+    {
+      title: 'Create Course',
+      url: '/courses/create',
+      icon: Plus,
+    },
+  ];
+
+  // Add admin/teacher only actions
+  if (userRole === 'admin' || userRole === 'teacher') {
+    baseActions.unshift({
+      title: 'Add User',
+      url: '/users/create',
+      icon: UserPlus,
+    });
+    
+    baseActions.push({
+      title: 'Generate Report',
+      url: '/reports/generate',
+      icon: FileText,
+    });
+  }
+
+  return baseActions;
+};
 
 export function AdminSidebar() {
   const location = useLocation();
   const { profile, signOut } = useAuth();
+  
+  const navigationItems = getNavigationItems(profile?.role || 'student');
+  const quickActions = getQuickActions(profile?.role || 'student');
 
   return (
     <Sidebar>
@@ -95,7 +119,11 @@ export function AdminSidebar() {
             <LayoutDashboard className="h-5 w-5" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">Admin Portal</span>
+            <span className="text-sm font-semibold">
+              {profile?.role === 'admin' ? 'Admin Portal' : 
+               profile?.role === 'teacher' ? 'Teacher Portal' : 
+               'Student Portal'}
+            </span>
             <span className="text-xs text-muted-foreground">DIL Platform</span>
           </div>
         </div>
@@ -158,7 +186,7 @@ export function AdminSidebar() {
                     <span className="truncate font-semibold">
                       {profile?.full_name || 'User'}
                     </span>
-                    <span className="truncate text-xs text-muted-foreground">
+                    <span className="truncate text-xs text-muted-foreground capitalize">
                       {profile?.role || 'User'}
                     </span>
                   </div>
@@ -190,6 +218,8 @@ export function AdminSidebar() {
 }
 
 export function AdminLayout() {
+  const { profile } = useAuth();
+  
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -198,7 +228,11 @@ export function AdminLayout() {
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Admin Portal</span>
+              <span>
+                {profile?.role === 'admin' ? 'Admin Portal' : 
+                 profile?.role === 'teacher' ? 'Teacher Portal' : 
+                 'Student Portal'}
+              </span>
             </div>
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4">

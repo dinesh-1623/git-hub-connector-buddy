@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
@@ -101,23 +102,8 @@ const AppContent: React.FC = () => {
     return <SignInPage />;
   }
 
-  // Check if user has teacher/admin role for admin features
-  if (profile.role !== 'teacher' && profile.role !== 'admin') {
-    console.log('🔍 App: User does not have required role:', profile.role);
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center py-12">
-          <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Access Denied</h3>
-          <p className="text-muted-foreground">
-            You need teacher or admin privileges to access this application.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  console.log('✅ App: User authenticated and authorized, showing admin interface');
+  // Allow all authenticated users to access the application
+  console.log('✅ App: User authenticated, showing interface for role:', profile.role);
   return (
     <Routes>
       <Route path="/" element={<AdminLayout />}>
