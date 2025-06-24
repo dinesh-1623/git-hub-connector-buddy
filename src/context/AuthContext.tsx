@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase, hasSupabaseConfig } from '@/lib/supabase';
@@ -109,58 +110,76 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
   }, []); // Empty dependency array to run only once
 
+  const createFallbackProfile = (user: User): Profile => {
+    console.log('🔍 AuthContext: Creating fallback profile for user:', user.id);
+    
+    // Determine role from email or use default
+    let initialRole: 'student' | 'teacher' | 'admin' = 'student';
+    
+    // Check user metadata first
+    if (user.user_metadata?.role) {
+      console.log('🔍 AuthContext: Found role in user_metadata:', user.user_metadata.role);
+      initialRole = user.user_metadata.role;
+    } else if (user.app_metadata?.role) {
+      console.log('🔍 AuthContext: Found role in app_metadata:', user.app_metadata.role);
+      initialRole = user.app_metadata.role;
+    } else if (user.email) {
+      // Determine role based on email for demo purposes
+      if (user.email.includes('teacher')) {
+        initialRole = 'teacher';
+      } else if (user.email.includes('admin')) {
+        initialRole = 'admin';
+      } else {
+        initialRole = 'student';
+      }
+      console.log('🔍 AuthContext: Determined role from email:', initialRole);
+    }
+
+    const fallbackProfile: Profile = {
+      id: user.id,
+      full_name: (user.email?.split('@')[0] || user.user_metadata?.full_name || 'User'),
+      role: initialRole,
+      avatar_url: user.user_metadata?.avatar_url || undefined,
+      bio: undefined
+    };
+
+    console.log('✅ AuthContext: Created fallback profile:', fallbackProfile);
+    return fallbackProfile;
+  };
+
   const createDefaultProfile = async (userId: string, userEmail: string, user: User) => {
     console.log('🔍 AuthContext: Creating default profile for user:', userId);
     
     try {
-      // Determine role from email or use default
-      let initialRole: 'student' | 'teacher' | 'admin' = 'student';
-      
-      // Check user metadata first
-      if (user.user_metadata?.role) {
-        console.log('🔍 AuthContext: Found role in user_metadata:', user.user_metadata.role);
-        initialRole = user.user_metadata.role;
-      } else if (user.app_metadata?.role) {
-        console.log('🔍 AuthContext: Found role in app_metadata:', user.app_metadata.role);
-        initialRole = user.app_metadata.role;
-      } else {
-        // Determine role based on email for demo purposes
-        if (userEmail.includes('teacher')) {
-          initialRole = 'teacher';
-        } else if (userEmail.includes('admin')) {
-          initialRole = 'admin';
-        } else {
-          initialRole = 'student';
-        }
-        console.log('🔍 AuthContext: Determined role from email:', initialRole);
-      }
-
-      const defaultProfile = {
+      const fallbackProfile = createFallbackProfile(user);
+      const profileToInsert = {
         id: userId,
-        full_name: userEmail.split('@')[0] || 'User',
-        role: initialRole,
-        avatar_url: null,
+        full_name: fallbackProfile.full_name,
+        role: fallbackProfile.role,
+        avatar_url: fallbackProfile.avatar_url,
         bio: null
       };
 
-      console.log('🔍 AuthContext: Inserting default profile:', defaultProfile);
+      console.log('🔍 AuthContext: Inserting default profile:', profileToInsert);
 
       const { data, error } = await supabase
         .from('profiles')
-        .insert(defaultProfile)
+        .insert(profileToInsert)
         .select()
         .single();
 
       if (error) {
         console.error('❌ AuthContext: Error creating default profile:', error);
-        return null;
+        console.log('🔍 AuthContext: Returning fallback profile instead');
+        return fallbackProfile;
       }
 
       console.log('✅ AuthContext: Default profile created:', data);
       return data;
     } catch (error) {
       console.error('❌ AuthContext: Exception creating default profile:', error);
-      return null;
+      console.log('🔍 AuthContext: Returning fallback profile instead');
+      return createFallbackProfile(user);
     }
   };
 
@@ -192,6 +211,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return newProfile;
         }
         
+        // For other database errors (like table doesn't exist), return fallback profile
+        if (user) {
+          console.log('🔍 AuthContext: Database error, using fallback profile');
+          const fallbackProfile = createFallbackProfile(user);
+          fetchingProfile.current = false;
+          return fallbackProfile;
+        }
+        
         fetchingProfile.current = false;
         return null;
       }
@@ -201,6 +228,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return data;
     } catch (error) {
       console.error('❌ AuthContext: Exception fetching profile:', error);
+      
+      // Always provide a fallback profile if we have user data
+      if (user) {
+        console.log('🔍 AuthContext: Exception occurred, using fallback profile');
+        const fallbackProfile = createFallbackProfile(user);
+        fetchingProfile.current = false;
+        return fallbackProfile;
+      }
+      
       fetchingProfile.current = false;
       return null;
     }
