@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
@@ -16,7 +15,7 @@ import { hasSupabaseConfig } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import './App.css';
-import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import GradesAssignmentsPage from './components/grades/GradesAssignmentsPage';
 
 const SupabaseSetupPage: React.FC = () => {
@@ -59,7 +58,7 @@ const MessagesPage: React.FC = () => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Messages</h1>
-      <p className="text-muted-foreground">Coming soon...</p>
+      <p className="text-muted-foreground">Messages functionality coming soon...</p>
     </div>
   );
 };
@@ -68,7 +67,7 @@ const DiscussionsPage: React.FC = () => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Discussions</h1>
-      <p className="text-muted-foreground">Coming soon...</p>
+      <p className="text-muted-foreground">Discussions functionality coming soon...</p>
     </div>
   );
 };
@@ -76,7 +75,6 @@ const DiscussionsPage: React.FC = () => {
 const AppContent: React.FC = () => {
   const { user, profile, loading } = useAuth();
 
-  // Debug current auth state
   console.log('🔍 App: Current auth state:', {
     user: !!user,
     profile: !!profile,
@@ -85,13 +83,11 @@ const AppContent: React.FC = () => {
     hasSupabaseConfig
   });
 
-  // Check if Supabase is configured
   if (!hasSupabaseConfig) {
     console.log('⚠️ App: Supabase not configured, showing setup page');
     return <SupabaseSetupPage />;
   }
 
-  // Show loading screen while checking authentication
   if (loading) {
     console.log('🔍 App: Still loading auth state, showing loading screen');
     return (
@@ -112,7 +108,6 @@ const AppContent: React.FC = () => {
     );
   }
 
-  // Show sign-in page if not authenticated
   if (!user || !profile) {
     console.log('🔍 App: User not authenticated, showing sign-in page', {
       hasUser: !!user,
@@ -121,27 +116,23 @@ const AppContent: React.FC = () => {
     return <SignInPage />;
   }
 
-  // Allow all authenticated users to access the application
   console.log('✅ App: User authenticated, showing interface for role:', profile.role);
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<AdminLayout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="users" element={<UsersPage />} />
-          <Route path="courses" element={<CoursesPage />} />
-          <Route path="courses/:id" element={<CourseDetailPage />} />
-          <Route path="reports" element={<ReportsPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="grades" element={<GradesAssignmentsPage />} />
-          <Route path="messages" element={<MessagesPage />} />
-          <Route path="discussions" element={<DiscussionsPage />} />
-        </Route>
-        {/* Redirect any unknown path to dashboard */}
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={<AdminLayout />}>
+        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="courses" element={<CoursesPage />} />
+        <Route path="courses/:id" element={<CourseDetailPage />} />
+        <Route path="reports" element={<ReportsPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+        <Route path="grades" element={<GradesAssignmentsPage />} />
+        <Route path="messages" element={<MessagesPage />} />
+        <Route path="discussions" element={<DiscussionsPage />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
   );
 };
 

@@ -54,7 +54,6 @@ const getNavigationItems = (userRole: string) => {
     },
   ];
 
-  // Add teacher/admin specific items
   if (userRole === 'admin' || userRole === 'teacher') {
     baseItems.push(
       {
@@ -85,7 +84,6 @@ const getNavigationItems = (userRole: string) => {
     );
   }
 
-  // Always show settings
   baseItems.push({
     title: 'Settings',
     url: '/settings',
@@ -104,7 +102,6 @@ const getQuickActions = (userRole: string) => {
     },
   ];
 
-  // Add admin/teacher only actions
   if (userRole === 'admin' || userRole === 'teacher') {
     baseActions.unshift({
       title: 'Add User',
@@ -128,9 +125,6 @@ export function AdminSidebar() {
   
   const navigationItems = getNavigationItems(profile?.role || 'student');
   const quickActions = getQuickActions(profile?.role || 'student');
-
-  console.log('Current location:', location.pathname);
-  console.log('Navigation items:', navigationItems);
 
   return (
     <Sidebar>
