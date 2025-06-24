@@ -182,7 +182,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const fetchProfile = async (userId: string, userEmail?: string, user?: User, force = false) => {
+  const fetchProfile = async (userId: string, user?: User, force = false) => {
     // Prevent multiple simultaneous fetches
     if (fetchingProfile.current && !force) {
       console.log('🔍 AuthContext: Profile fetch already in progress, skipping');
@@ -244,7 +244,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const refreshProfile = async () => {
     if (user) {
       console.log('🔍 AuthContext: Refreshing profile for user:', user.id);
-      const profileData = await fetchProfile(user.id, user.email, user, true);
+      const profileData = await fetchProfile(user.id, user, true);
       setProfile(profileData);
     }
   };
@@ -320,7 +320,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       if (session.user) {
         console.log('🔍 AuthContext: Fetching profile for authenticated user');
-        const profileData = await fetchProfile(session.user.id, session.user.email, session.user);
+        const profileData = await fetchProfile(session.user.id, session.user);
         console.log('🔍 AuthContext: Profile data received:', profileData);
         setProfile(profileData);
         
@@ -342,7 +342,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(session.user);
         
         if (session.user) {
-          const profileData = await fetchProfile(session.user.id, session.user.email, session.user);
+          const profileData = await fetchProfile(session.user.id, session.user);
           setProfile(profileData);
         }
       } else {
