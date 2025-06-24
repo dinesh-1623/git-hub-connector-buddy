@@ -1,74 +1,105 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { 
   Users, 
   BookOpen, 
-  GraduationCap, 
+  Activity, 
+  HardDrive,
   TrendingUp,
   UserPlus,
   Plus,
-  FileText 
+  FileText,
+  CheckCircle,
+  AlertCircle,
+  Clock
 } from 'lucide-react';
 
 const stats = [
   {
     title: 'Total Users',
-    value: '1,234',
+    value: '2,847',
     description: '+12% from last month',
     icon: Users,
+    trend: 'up'
   },
   {
     title: 'Active Courses',
     value: '156',
     description: '+3 new this week',
     icon: BookOpen,
+    trend: 'up'
   },
   {
-    title: 'Assignments',
-    value: '89',
-    description: '12 pending review',
-    icon: GraduationCap,
+    title: 'System Health',
+    value: '98.5%',
+    description: 'All systems operational',
+    icon: Activity,
+    trend: 'stable'
   },
   {
-    title: 'Success Rate',
-    value: '94.2%',
-    description: '+2.1% improvement',
-    icon: TrendingUp,
+    title: 'Storage Usage',
+    value: '2.4 TB',
+    description: '67% of total capacity',
+    icon: HardDrive,
+    trend: 'up'
   },
 ];
 
-const recentActivity = [
+const recentUsers = [
   {
-    action: 'New user registered',
-    user: 'John Doe',
-    time: '2 minutes ago',
+    name: 'Sarah Johnson',
+    email: 'sarah.j@example.com',
+    status: 'Active',
+    joinDate: '2 hours ago',
+    avatar: 'SJ'
   },
   {
-    action: 'Assignment submitted',
-    user: 'Jane Smith',
-    time: '5 minutes ago',
+    name: 'Michael Chen',
+    email: 'michael.c@example.com', 
+    status: 'Active',
+    joinDate: '4 hours ago',
+    avatar: 'MC'
   },
   {
-    action: 'Course completed',
-    user: 'Mike Johnson',
-    time: '10 minutes ago',
+    name: 'Emma Wilson',
+    email: 'emma.w@example.com',
+    status: 'Pending',
+    joinDate: '1 day ago',
+    avatar: 'EW'
   },
   {
-    action: 'New course created',
-    user: 'Sarah Wilson',
-    time: '15 minutes ago',
-  },
+    name: 'James Miller',
+    email: 'james.m@example.com',
+    status: 'Active', 
+    joinDate: '2 days ago',
+    avatar: 'JM'
+  }
+];
+
+const systemHealth = [
+  { component: 'Database', status: 'Operational', uptime: '99.9%' },
+  { component: 'API Server', status: 'Operational', uptime: '99.8%' },
+  { component: 'File Storage', status: 'Warning', uptime: '97.2%' },
+  { component: 'Email Service', status: 'Operational', uptime: '99.5%' }
+];
+
+const storageBreakdown = [
+  { category: 'User Files', usage: '1.2 TB', percentage: 35 },
+  { category: 'Course Content', usage: '800 GB', percentage: 25 },
+  { category: 'System Backups', usage: '400 GB', percentage: 15 },
+  { category: 'Other', usage: '300 GB', percentage: 10 }
 ];
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">System Overview</h1>
           <p className="text-muted-foreground mt-1">
-            Welcome to your admin dashboard. Here's what's happening today.
+            Monitor and manage your learning platform
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -95,36 +126,47 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {stat.description}
-              </p>
+              <div className="flex items-center gap-1 mt-1">
+                {stat.trend === 'up' && <TrendingUp className="h-3 w-3 text-green-500" />}
+                <p className="text-xs text-muted-foreground">
+                  {stat.description}
+                </p>
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-7">
-        {/* Recent Activity */}
-        <Card className="lg:col-span-4">
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Recent Users */}
+        <Card>
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              Recent Users
+            </CardTitle>
             <CardDescription>
-              Latest actions and events in the system
+              Latest user registrations and activity
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentActivity.map((activity, index) => (
-                <div key={index} className="flex items-center space-x-4 p-2 rounded-lg hover:bg-muted/50 transition-colors">
-                  <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">{activity.action}</p>
-                    <p className="text-xs text-muted-foreground">
-                      by {activity.user}
-                    </p>
+              {recentUsers.map((user, index) => (
+                <div key={index} className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
+                      {user.avatar}
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm">{user.name}</div>
+                      <div className="text-xs text-muted-foreground">{user.email}</div>
+                    </div>
                   </div>
-                  <div className="text-xs text-muted-foreground flex-shrink-0">
-                    {activity.time}
+                  <div className="text-right">
+                    <Badge variant={user.status === 'Active' ? 'default' : 'secondary'} className="text-xs">
+                      {user.status}
+                    </Badge>
+                    <div className="text-xs text-muted-foreground mt-1">{user.joinDate}</div>
                   </div>
                 </div>
               ))}
@@ -132,34 +174,73 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
-        <Card className="lg:col-span-3">
+        {/* System Health Details */}
+        <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5" />
+              System Health Details
+            </CardTitle>
             <CardDescription>
-              Common administrative tasks
+              Real-time system component status
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <Button className="w-full justify-start" variant="outline">
-              <UserPlus className="h-4 w-4 mr-2" />
-              Add New User
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <BookOpen className="h-4 w-4 mr-2" />
-              Create Course
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <GraduationCap className="h-4 w-4 mr-2" />
-              Grade Assignments
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <FileText className="h-4 w-4 mr-2" />
-              Generate Report
-            </Button>
+          <CardContent>
+            <div className="space-y-4">
+              {systemHealth.map((item, index) => (
+                <div key={index} className="flex items-center justify-between p-3 rounded-lg border bg-card">
+                  <div className="flex items-center space-x-3">
+                    {item.status === 'Operational' ? (
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <AlertCircle className="h-4 w-4 text-yellow-500" />
+                    )}
+                    <span className="font-medium text-sm">{item.component}</span>
+                  </div>
+                  <div className="text-right">
+                    <Badge variant={item.status === 'Operational' ? 'default' : 'secondary'} className="text-xs">
+                      {item.status}
+                    </Badge>
+                    <div className="text-xs text-muted-foreground mt-1">{item.uptime}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Storage Breakdown */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <HardDrive className="h-5 w-5" />
+            Storage Breakdown
+          </CardTitle>
+          <CardDescription>
+            Detailed storage usage across categories
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {storageBreakdown.map((item, index) => (
+              <div key={index} className="p-4 rounded-lg border bg-card">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">{item.category}</span>
+                  <span className="text-xs text-muted-foreground">{item.percentage}%</span>
+                </div>
+                <div className="text-lg font-bold mb-2">{item.usage}</div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div 
+                    className="bg-primary h-2 rounded-full transition-all duration-300" 
+                    style={{ width: `${item.percentage}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

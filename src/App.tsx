@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
@@ -127,13 +128,12 @@ const AppContent: React.FC = () => {
         <Route path="users" element={<UsersPage />} />
         <Route path="courses" element={<CoursesPage />} />
         <Route path="courses/:id" element={<CourseDetailPage />} />
-        <Route path="grade-assignments" element={<GradesAssignmentsPage />} />
         <Route path="reports" element={<ReportsPage />} />
         <Route path="settings" element={<SettingsPage />} />
-        {/* Quick action routes */}
-        <Route path="users/create" element={<UsersPage />} />
-        <Route path="courses/create" element={<CoursesPage />} />
-        <Route path="reports/generate" element={<ReportsPage />} />
+        {/* Quick action routes - redirect to main pages */}
+        <Route path="users/create" element={<Navigate to="/users" replace />} />
+        <Route path="courses/create" element={<Navigate to="/courses" replace />} />
+        <Route path="reports/generate" element={<Navigate to="/reports" replace />} />
       </Route>
       {/* Redirect any unknown path to dashboard */}
       <Route path="*" element={<Navigate to="/dashboard" replace />} />

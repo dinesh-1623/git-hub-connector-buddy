@@ -1,3 +1,4 @@
+
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -30,10 +31,8 @@ import {
   BookOpen,
   FileText,
   Settings,
-  GraduationCap,
   UserPlus,
   Plus,
-  BarChart3,
   LogOut,
   User,
 } from 'lucide-react';
@@ -55,14 +54,9 @@ const navigationItems = [
     icon: BookOpen,
   },
   {
-    title: 'Grade Assignments',
-    url: '/grade-assignments',
-    icon: GraduationCap,
-  },
-  {
     title: 'Reports',
     url: '/reports',
-    icon: BarChart3,
+    icon: FileText,
   },
   {
     title: 'Settings',
@@ -98,11 +92,11 @@ export function AdminSidebar() {
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <GraduationCap className="h-5 w-5" />
+            <LayoutDashboard className="h-5 w-5" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">DIL Platform</span>
-            <span className="text-xs text-muted-foreground">Admin Portal</span>
+            <span className="text-sm font-semibold">Admin Portal</span>
+            <span className="text-xs text-muted-foreground">DIL Platform</span>
           </div>
         </div>
       </SidebarHeader>
