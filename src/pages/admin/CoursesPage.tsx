@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, Plus, Search, Users, Clock } from 'lucide-react';
+import { BookOpen, Plus, Search, Users, Clock, Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const courses = [
@@ -15,6 +15,8 @@ const courses = [
     students: 45,
     duration: '8 weeks',
     status: 'active',
+    thumbnail: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=250&fit=crop',
+    videoUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=250&fit=crop',
   },
   {
     id: 2,
@@ -24,6 +26,8 @@ const courses = [
     students: 32,
     duration: '12 weeks',
     status: 'active',
+    thumbnail: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=250&fit=crop',
+    videoUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=250&fit=crop',
   },
   {
     id: 3,
@@ -33,6 +37,8 @@ const courses = [
     students: 28,
     duration: '10 weeks',
     status: 'draft',
+    thumbnail: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=250&fit=crop',
+    videoUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=250&fit=crop',
   },
 ];
 
@@ -75,13 +81,29 @@ export default function CoursesPage() {
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {courses.map((course) => (
-              <Card key={course.id} className="transition-all hover:shadow-md hover:scale-[1.02]">
+              <Card key={course.id} className="transition-all hover:shadow-md hover:scale-[1.02] overflow-hidden">
+                <div className="relative">
+                  <img 
+                    src={course.thumbnail} 
+                    alt={course.title}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                    <Button size="sm" variant="secondary" className="gap-2">
+                      <Play className="h-4 w-4" />
+                      Preview
+                    </Button>
+                  </div>
+                  <Badge 
+                    variant={course.status === 'active' ? 'default' : 'secondary'}
+                    className="absolute top-3 right-3"
+                  >
+                    {course.status}
+                  </Badge>
+                </div>
                 <CardHeader>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 mb-2">
                     <BookOpen className="h-5 w-5 text-primary" />
-                    <Badge variant={course.status === 'active' ? 'default' : 'secondary'}>
-                      {course.status}
-                    </Badge>
                   </div>
                   <CardTitle className="text-lg line-clamp-2">{course.title}</CardTitle>
                   <CardDescription className="line-clamp-2">{course.description}</CardDescription>
