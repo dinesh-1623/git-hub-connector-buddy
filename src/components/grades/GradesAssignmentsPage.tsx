@@ -47,7 +47,7 @@ interface Assignment {
   graded_submissions: number;
   pending_submissions: number;
   average_score: number;
-  status: 'draft' | 'published' | 'closed';
+  status: 'draft' | 'active' | 'closed';
 }
 
 interface Course {
@@ -74,7 +74,7 @@ const mockAssignments: Assignment[] = [
     graded_submissions: 20,
     pending_submissions: 5,
     average_score: 85,
-    status: 'published'
+    status: 'active'
   },
   {
     id: '2',
@@ -90,7 +90,7 @@ const mockAssignments: Assignment[] = [
     graded_submissions: 15,
     pending_submissions: 10,
     average_score: 78,
-    status: 'published'
+    status: 'active'
   },
   {
     id: '3',
@@ -130,7 +130,7 @@ const mockCourses: Course[] = [
 ];
 
 const GradesAssignmentsPage: React.FC = () => {
-  const [assignments, setAssignments] = useState<Assignment[]>(mockAssignments);
+  const [assignments] = useState<Assignment[]>(mockAssignments);
   const [courses] = useState<Course[]>(mockCourses);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
@@ -138,7 +138,6 @@ const GradesAssignmentsPage: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
   const [selectedStudentId, setSelectedStudentId] = useState<string>('');
-  const [isGradingInterfaceOpen, setIsGradingInterfaceOpen] = useState(false);
   const [isSubmissionListOpen, setIsSubmissionListOpen] = useState(false);
 
   useEffect(() => {
@@ -165,7 +164,7 @@ const GradesAssignmentsPage: React.FC = () => {
     setIsDialogOpen(false);
   };
 
-  const handleCreateAssignment = (assignmentId: string) => {
+  const handleCreateAssignment = () => {
     // Reload assignments or handle the new assignment
     handleCloseDialog();
   };
@@ -174,11 +173,9 @@ const GradesAssignmentsPage: React.FC = () => {
     setSelectedAssignment(assignment);
     // For demo purposes, using a mock student ID
     setSelectedStudentId('student-123');
-    setIsGradingInterfaceOpen(true);
   };
 
   const handleCloseGradingInterface = () => {
-    setIsGradingInterfaceOpen(false);
     setSelectedAssignment(null);
     setSelectedStudentId('');
   };
