@@ -43,21 +43,6 @@ interface Assignment {
   description?: string;
 }
 
-interface Student {
-  student_id: string;
-  student_name: string;
-  assignment_id: string;
-  assignment_title: string;
-  course_id: string;
-  due_date: string;
-  max_score: number;
-  submission_status: 'not_submitted' | 'submitted' | 'late' | 'graded';
-  score?: number;
-  submitted_at?: string;
-  graded_at?: string;
-  progress_status: string;
-}
-
 interface Course {
   id: string;
   title: string;

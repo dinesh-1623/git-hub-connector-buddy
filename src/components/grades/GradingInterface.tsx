@@ -16,11 +16,8 @@ import {
   Calendar, 
   Clock,
   Download,
-  Eye,
-  CheckCircle,
-  AlertTriangle
+  CheckCircle
 } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
