@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -10,11 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   CalendarDays, 
-  Users, 
   BookOpen, 
   Plus,
-  Search,
-  Filter,
   MoreVertical
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -31,7 +29,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import CreateAssignmentQuizDialog from './CreateAssignmentQuizDialog';
 import GradingInterface from './GradingInterface';
@@ -42,15 +39,21 @@ interface Assignment {
   title: string;
   course_id: string;
   course_name: string;
+  course_title: string;
   due_date: string;
   type: 'quiz' | 'assignment' | 'exam';
   max_score: number;
   description?: string;
+  total_submissions: number;
+  graded_submissions: number;
+  pending_submissions: number;
+  average_score: number;
 }
 
 interface Course {
   id: string;
   name: string;
+  title: string;
   description: string;
   credits: number;
   teacher_id: string;
@@ -62,30 +65,45 @@ const mockAssignments: Assignment[] = [
     title: 'Midterm Exam',
     course_id: '101',
     course_name: 'Introduction to React',
+    course_title: 'Introduction to React',
     due_date: '2024-05-01',
     type: 'exam',
     max_score: 100,
-    description: 'Comprehensive exam covering all topics.'
+    description: 'Comprehensive exam covering all topics.',
+    total_submissions: 25,
+    graded_submissions: 20,
+    pending_submissions: 5,
+    average_score: 85
   },
   {
     id: '2',
     title: 'Essay on Hooks',
     course_id: '101',
     course_name: 'Introduction to React',
+    course_title: 'Introduction to React',
     due_date: '2024-05-15',
     type: 'assignment',
     max_score: 50,
-    description: 'Write an essay discussing the benefits of React Hooks.'
+    description: 'Write an essay discussing the benefits of React Hooks.',
+    total_submissions: 25,
+    graded_submissions: 15,
+    pending_submissions: 10,
+    average_score: 78
   },
   {
     id: '3',
     title: 'Quiz 1 - Components',
     course_id: '101',
     course_name: 'Introduction to React',
+    course_title: 'Introduction to React',
     due_date: '2024-04-15',
     type: 'quiz',
     max_score: 20,
-    description: 'Short quiz on React components.'
+    description: 'Short quiz on React components.',
+    total_submissions: 25,
+    graded_submissions: 25,
+    pending_submissions: 0,
+    average_score: 92
   },
 ];
 
@@ -93,6 +111,7 @@ const mockCourses: Course[] = [
   {
     id: '101',
     name: 'Introduction to React',
+    title: 'Introduction to React',
     description: 'An introductory course to React development.',
     credits: 3,
     teacher_id: 'T123'
@@ -100,6 +119,7 @@ const mockCourses: Course[] = [
   {
     id: '102',
     name: 'Advanced JavaScript',
+    title: 'Advanced JavaScript',
     description: 'A deep dive into advanced JavaScript concepts.',
     credits: 4,
     teacher_id: 'T124'
@@ -108,7 +128,7 @@ const mockCourses: Course[] = [
 
 const GradesAssignmentsPage: React.FC = () => {
   const [assignments, setAssignments] = useState<Assignment[]>(mockAssignments);
-  const [courses, setCourses] = useState<Course[]>(mockCourses);
+  const [courses] = useState<Course[]>(mockCourses);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
   const [selectedCourse, setSelectedCourse] = useState<string>('all');
