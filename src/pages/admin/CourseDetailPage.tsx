@@ -6,12 +6,66 @@ import { ArrowLeft, BookOpen, Users, Clock, Edit, Trash2, DollarSign, Calendar }
 import { useNavigate, useParams } from 'react-router-dom';
 import { getCourseById } from '@/lib/coursesData';
 import { CourseVideoPlayer } from '@/components/CourseVideoPlayer';
+import { toast } from 'sonner';
 
 export default function CourseDetailPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   
   const course = getCourseById(parseInt(id || '0'));
+
+  // Action button handlers
+  const handleViewStudents = () => {
+    console.log(`View Students clicked for course: ${course?.title} (ID: ${id})`);
+    toast.info(`Viewing students for ${course?.title}`, {
+      description: 'This will show the student list for this course'
+    });
+    // TODO: Navigate to students page or open students modal
+    // navigate(`/courses/${id}/students`);
+  };
+
+  const handleManageContent = () => {
+    console.log(`Manage Content clicked for course: ${course?.title} (ID: ${id})`);
+    toast.info(`Managing content for ${course?.title}`, {
+      description: 'This will open the content management interface'
+    });
+    // TODO: Navigate to content management page or open content modal
+    // navigate(`/courses/${id}/content`);
+  };
+
+  const handleViewAnalytics = () => {
+    console.log(`View Analytics clicked for course: ${course?.title} (ID: ${id})`);
+    toast.info(`Viewing analytics for ${course?.title}`, {
+      description: 'This will show course analytics and performance data'
+    });
+    // TODO: Navigate to analytics page or open analytics modal
+    // navigate(`/courses/${id}/analytics`);
+  };
+
+  const handleSchedule = () => {
+    console.log(`Schedule clicked for course: ${course?.title} (ID: ${id})`);
+    toast.info(`Opening schedule for ${course?.title}`, {
+      description: 'This will show the course schedule and calendar'
+    });
+    // TODO: Navigate to schedule page or open schedule modal
+    // navigate(`/courses/${id}/schedule`);
+  };
+
+  const handleEditCourse = () => {
+    console.log(`Edit Course clicked for course: ${course?.title} (ID: ${id})`);
+    toast.info(`Editing ${course?.title}`, {
+      description: 'This will open the course editor'
+    });
+    // TODO: Navigate to edit page or open edit modal
+  };
+
+  const handleDeleteCourse = () => {
+    console.log(`Delete Course clicked for course: ${course?.title} (ID: ${id})`);
+    toast.warning(`Delete requested for ${course?.title}`, {
+      description: 'This will show a confirmation dialog'
+    });
+    // TODO: Show confirmation dialog and handle deletion
+  };
 
   if (!course) {
     return (
@@ -54,11 +108,11 @@ export default function CourseDetailPage() {
           </div>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline">
+          <Button variant="outline" onClick={handleEditCourse}>
             <Edit className="h-4 w-4 mr-2" />
             Edit Course
           </Button>
-          <Button variant="destructive">
+          <Button variant="destructive" onClick={handleDeleteCourse}>
             <Trash2 className="h-4 w-4 mr-2" />
             Delete Course
           </Button>
@@ -181,10 +235,16 @@ export default function CourseDetailPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <Button className="w-full">View Students</Button>
-                <Button variant="outline" className="w-full">Manage Content</Button>
-                <Button variant="outline" className="w-full">View Analytics</Button>
-                <Button variant="outline" className="w-full">
+                <Button className="w-full" onClick={handleViewStudents}>
+                  View Students
+                </Button>
+                <Button variant="outline" className="w-full" onClick={handleManageContent}>
+                  Manage Content
+                </Button>
+                <Button variant="outline" className="w-full" onClick={handleViewAnalytics}>
+                  View Analytics
+                </Button>
+                <Button variant="outline" className="w-full" onClick={handleSchedule}>
                   <Calendar className="h-4 w-4 mr-2" />
                   Schedule
                 </Button>
