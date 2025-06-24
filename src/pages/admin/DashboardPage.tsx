@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +13,7 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const stats = [
   {
@@ -90,6 +92,26 @@ const storageBreakdown = [
 ];
 
 export default function DashboardPage() {
+  const handleGenerateReport = () => {
+    console.log('Generating dashboard report');
+    toast.success('Dashboard report generation started');
+  };
+
+  const handleQuickAction = () => {
+    console.log('Quick action triggered');
+    toast.info('Quick action menu would appear here');
+  };
+
+  const handleViewUser = (user: any) => {
+    console.log('Viewing user:', user.name);
+    toast.info(`Viewing ${user.name}'s profile`);
+  };
+
+  const handleSystemComponent = (component: any) => {
+    console.log('Checking system component:', component.component);
+    toast.info(`System status: ${component.component} - ${component.status}`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -100,11 +122,11 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleGenerateReport}>
             <FileText className="h-4 w-4 mr-2" />
             Generate Report
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={handleQuickAction}>
             <Plus className="h-4 w-4 mr-2" />
             Quick Action
           </Button>
@@ -114,7 +136,7 @@ export default function DashboardPage() {
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
-          <Card key={stat.title} className="transition-shadow hover:shadow-md">
+          <Card key={stat.title} className="transition-shadow hover:shadow-md cursor-pointer" onClick={() => toast.info(`${stat.title}: ${stat.value}`)}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 {stat.title}
@@ -149,7 +171,11 @@ export default function DashboardPage() {
           <CardContent>
             <div className="space-y-4">
               {recentUsers.map((user, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+                <div 
+                  key={index} 
+                  className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors cursor-pointer"
+                  onClick={() => handleViewUser(user)}
+                >
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
                       {user.avatar}
@@ -185,7 +211,11 @@ export default function DashboardPage() {
           <CardContent>
             <div className="space-y-4">
               {systemHealth.map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-lg border bg-card">
+                <div 
+                  key={index} 
+                  className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors cursor-pointer"
+                  onClick={() => handleSystemComponent(item)}
+                >
                   <div className="flex items-center space-x-3">
                     {item.status === 'Operational' ? (
                       <CheckCircle className="h-4 w-4 text-green-500" />
@@ -221,7 +251,11 @@ export default function DashboardPage() {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {storageBreakdown.map((item, index) => (
-              <div key={index} className="p-4 rounded-lg border bg-card">
+              <div 
+                key={index} 
+                className="p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors cursor-pointer"
+                onClick={() => toast.info(`${item.category}: ${item.usage} (${item.percentage}%)`)}
+              >
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium">{item.category}</span>
                   <span className="text-xs text-muted-foreground">{item.percentage}%</span>

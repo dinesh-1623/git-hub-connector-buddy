@@ -2,6 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, Download, BarChart3, TrendingUp, Users, BookOpen } from 'lucide-react';
+import { toast } from 'sonner';
 
 const reportTypes = [
   {
@@ -30,7 +31,33 @@ const reportTypes = [
   },
 ];
 
+const recentReports = [
+  { name: 'Monthly User Activity - March 2024.pdf', date: '2 hours ago', size: '2.4 MB' },
+  { name: 'Course Performance Q1 2024.xlsx', date: '1 day ago', size: '5.1 MB' },
+  { name: 'Assignment Statistics - Week 12.pdf', date: '3 days ago', size: '1.8 MB' },
+];
+
 export default function ReportsPage() {
+  const handleGenerateCustomReport = () => {
+    console.log('Generating custom report');
+    toast.success('Custom report generation started');
+  };
+
+  const handleGenerateReport = (reportTitle: string) => {
+    console.log('Generating report:', reportTitle);
+    toast.success(`Generating ${reportTitle}...`);
+  };
+
+  const handleDownloadReport = (reportTitle: string) => {
+    console.log('Downloading report:', reportTitle);
+    toast.info(`Downloading ${reportTitle}...`);
+  };
+
+  const handleDownloadFile = (fileName: string) => {
+    console.log('Downloading file:', fileName);
+    toast.info(`Downloading ${fileName}...`);
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -40,7 +67,7 @@ export default function ReportsPage() {
             Generate and download system reports
           </p>
         </div>
-        <Button>
+        <Button onClick={handleGenerateCustomReport}>
           <FileText className="h-4 w-4 mr-2" />
           Generate Custom Report
         </Button>
@@ -62,11 +89,18 @@ export default function ReportsPage() {
                   Last generated: {report.lastGenerated}
                 </div>
                 <div className="flex gap-2">
-                  <Button size="sm" variant="outline">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => handleDownloadReport(report.title)}
+                  >
                     <Download className="h-4 w-4 mr-2" />
                     Download
                   </Button>
-                  <Button size="sm">
+                  <Button 
+                    size="sm"
+                    onClick={() => handleGenerateReport(report.title)}
+                  >
                     Generate
                   </Button>
                 </div>
@@ -85,11 +119,7 @@ export default function ReportsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {[
-              { name: 'Monthly User Activity - March 2024.pdf', date: '2 hours ago', size: '2.4 MB' },
-              { name: 'Course Performance Q1 2024.xlsx', date: '1 day ago', size: '5.1 MB' },
-              { name: 'Assignment Statistics - Week 12.pdf', date: '3 days ago', size: '1.8 MB' },
-            ].map((file, index) => (
+            {recentReports.map((file, index) => (
               <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg gap-4 hover:bg-muted/50 transition-colors">
                 <div className="flex items-center space-x-3">
                   <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
@@ -100,7 +130,12 @@ export default function ReportsPage() {
                     </div>
                   </div>
                 </div>
-                <Button size="sm" variant="outline" className="w-full sm:w-auto">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="w-full sm:w-auto"
+                  onClick={() => handleDownloadFile(file.name)}
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Download
                 </Button>

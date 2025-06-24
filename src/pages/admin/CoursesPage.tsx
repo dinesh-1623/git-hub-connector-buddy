@@ -3,8 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, Plus, Search, Users, Clock, Play } from 'lucide-react';
+import { BookOpen, Plus, Search, Users, Clock, Play, Edit, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 const courses = [
   {
@@ -44,10 +46,42 @@ const courses = [
 
 export default function CoursesPage() {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleViewCourse = (courseId: number) => {
+    console.log('Navigating to course:', courseId);
     navigate(`/courses/${courseId}`);
   };
+
+  const handleCreateCourse = () => {
+    console.log('Creating new course');
+    toast.success('Course creation dialog would open here');
+    // In a real app, this would open a course creation dialog
+  };
+
+  const handlePreviewCourse = (course: any) => {
+    console.log('Previewing course:', course.title);
+    toast.info(`Previewing course: ${course.title}`);
+    // In a real app, this would open a preview modal or navigate to preview
+  };
+
+  const handleEditCourse = (course: any) => {
+    console.log('Editing course:', course.title);
+    toast.info(`Editing course: ${course.title}`);
+    // In a real app, this would open an edit dialog
+  };
+
+  const handleDeleteCourse = (course: any) => {
+    console.log('Deleting course:', course.title);
+    toast.error(`Delete course: ${course.title}`);
+    // In a real app, this would show a confirmation dialog
+  };
+
+  const filteredCourses = courses.filter(course =>
+    course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    course.instructor.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="space-y-8">
@@ -58,7 +92,7 @@ export default function CoursesPage() {
             Manage courses and educational content
           </p>
         </div>
-        <Button>
+        <Button onClick={handleCreateCourse}>
           <Plus className="h-4 w-4 mr-2" />
           Create Course
         </Button>
@@ -75,21 +109,37 @@ export default function CoursesPage() {
           <div className="flex items-center gap-4 mb-6">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search courses..." className="pl-10" />
+              <Input 
+                placeholder="Search courses..." 
+                className="pl-10" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
+            <Button variant="outline" onClick={() => toast.info('Filter options would appear here')}>
+              Filter
+            </Button>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {courses.map((course) => (
+            {filteredCourses.map((course) => (
               <Card key={course.id} className="transition-all hover:shadow-md hover:scale-[1.02] overflow-hidden">
-                <div className="relative">
+                <div className="relative group">
                   <img 
                     src={course.thumbnail} 
                     alt={course.title}
                     className="w-full h-48 object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                    <Button size="sm" variant="secondary" className="gap-2">
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button 
+                      size="sm" 
+                      variant="secondary" 
+                      className="gap-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePreviewCourse(course);
+                      }}
+                    >
                       <Play className="h-4 w-4" />
                       Preview
                     </Button>
@@ -122,13 +172,33 @@ export default function CoursesPage() {
                       <span className="font-medium">Instructor:</span> {course.instructor}
                     </div>
                   </div>
-                  <div className="mt-6 pt-4 border-t">
+                  <div className="mt-6 pt-4 border-t flex gap-2">
                     <Button 
                       size="sm" 
-                      className="w-full"
+                      className="flex-1"
                       onClick={() => handleViewCourse(course.id)}
                     >
                       View Course
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditCourse(course);
+                      }}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteCourse(course);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </CardContent>

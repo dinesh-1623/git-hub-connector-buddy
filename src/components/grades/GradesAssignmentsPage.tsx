@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -141,11 +142,7 @@ const GradesAssignmentsPage: React.FC = () => {
   const [isSubmissionListOpen, setIsSubmissionListOpen] = useState(false);
 
   useEffect(() => {
-    // Simulate fetching assignments and courses from an API
-    // In a real application, you would use `fetch` or `axios`
-    // Example:
-    // fetch('/api/assignments').then(res => res.json()).then(data => setAssignments(data));
-    // fetch('/api/courses').then(res => res.json()).then(data => setCourses(data));
+    console.log('GradesAssignmentsPage: Component mounted');
   }, []);
 
   const filteredAssignments = assignments.filter(assignment => {
@@ -157,49 +154,53 @@ const GradesAssignmentsPage: React.FC = () => {
   });
 
   const handleOpenDialog = () => {
+    console.log('Opening create assignment dialog');
     setIsDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
+    console.log('Closing create assignment dialog');
     setIsDialogOpen(false);
   };
 
   const handleCreateAssignment = () => {
-    // Reload assignments or handle the new assignment
+    console.log('Assignment created successfully');
     handleCloseDialog();
   };
 
   const handleOpenGradingInterface = (assignment: Assignment) => {
+    console.log('Opening grading interface for assignment:', assignment.title);
     setSelectedAssignment(assignment);
-    // For demo purposes, using a mock student ID
     setSelectedStudentId('student-123');
   };
 
   const handleCloseGradingInterface = () => {
+    console.log('Closing grading interface');
     setSelectedAssignment(null);
     setSelectedStudentId('');
   };
 
   const handleOpenSubmissionList = (assignment: Assignment) => {
+    console.log('Opening submission list for assignment:', assignment.title);
     setSelectedAssignment(assignment);
     setIsSubmissionListOpen(true);
   };
 
   const handleCloseSubmissionList = () => {
+    console.log('Closing submission list');
     setIsSubmissionListOpen(false);
     setSelectedAssignment(null);
   };
 
   const handleGradeSubmitted = () => {
-    // Handle after grade is submitted
+    console.log('Grade submitted successfully');
     handleCloseGradingInterface();
   };
 
   const handleGradeStudent = (studentId: string) => {
+    console.log('Grading student:', studentId);
     setSelectedStudentId(studentId);
     setIsSubmissionListOpen(false);
-    // Open grading interface for the specific student
-    // You can add logic here to switch to grading mode
   };
 
   return (
@@ -258,7 +259,7 @@ const GradesAssignmentsPage: React.FC = () => {
                   <CardHeader>
                     <CardTitle>{assignment.title}</CardTitle>
                     <CardDescription>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 mb-2">
                         <BookOpen className="h-4 w-4" />
                         <span>{assignment.course_name}</span>
                       </div>
@@ -269,12 +270,16 @@ const GradesAssignmentsPage: React.FC = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex flex-col space-y-2">
-                    <Badge>{assignment.type}</Badge>
-                    <p>{assignment.description}</p>
-                    <Progress value={(75 / assignment.max_score) * 100} />
+                    <Badge variant={assignment.type === 'exam' ? 'default' : 'secondary'}>
+                      {assignment.type}
+                    </Badge>
+                    <div className="text-sm text-muted-foreground">
+                      {assignment.description}
+                    </div>
+                    <Progress value={(assignment.graded_submissions / assignment.total_submissions) * 100} />
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">
-                        75% Completed
+                        {Math.round((assignment.graded_submissions / assignment.total_submissions) * 100)}% Graded
                       </span>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
