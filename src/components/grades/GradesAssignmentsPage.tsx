@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -48,6 +47,7 @@ interface Assignment {
   graded_submissions: number;
   pending_submissions: number;
   average_score: number;
+  status: 'draft' | 'published' | 'closed';
 }
 
 interface Course {
@@ -73,7 +73,8 @@ const mockAssignments: Assignment[] = [
     total_submissions: 25,
     graded_submissions: 20,
     pending_submissions: 5,
-    average_score: 85
+    average_score: 85,
+    status: 'published'
   },
   {
     id: '2',
@@ -88,7 +89,8 @@ const mockAssignments: Assignment[] = [
     total_submissions: 25,
     graded_submissions: 15,
     pending_submissions: 10,
-    average_score: 78
+    average_score: 78,
+    status: 'published'
   },
   {
     id: '3',
@@ -103,7 +105,8 @@ const mockAssignments: Assignment[] = [
     total_submissions: 25,
     graded_submissions: 25,
     pending_submissions: 0,
-    average_score: 92
+    average_score: 92,
+    status: 'closed'
   },
 ];
 
@@ -134,6 +137,7 @@ const GradesAssignmentsPage: React.FC = () => {
   const [selectedCourse, setSelectedCourse] = useState<string>('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
+  const [selectedStudentId, setSelectedStudentId] = useState<string>('');
   const [isGradingInterfaceOpen, setIsGradingInterfaceOpen] = useState(false);
   const [isSubmissionListOpen, setIsSubmissionListOpen] = useState(false);
 
@@ -161,19 +165,22 @@ const GradesAssignmentsPage: React.FC = () => {
     setIsDialogOpen(false);
   };
 
-  const handleCreateAssignment = (newAssignment: Assignment) => {
-    setAssignments([...assignments, newAssignment]);
+  const handleCreateAssignment = (assignmentId: string) => {
+    // Reload assignments or handle the new assignment
     handleCloseDialog();
   };
 
   const handleOpenGradingInterface = (assignment: Assignment) => {
     setSelectedAssignment(assignment);
+    // For demo purposes, using a mock student ID
+    setSelectedStudentId('student-123');
     setIsGradingInterfaceOpen(true);
   };
 
   const handleCloseGradingInterface = () => {
     setIsGradingInterfaceOpen(false);
     setSelectedAssignment(null);
+    setSelectedStudentId('');
   };
 
   const handleOpenSubmissionList = (assignment: Assignment) => {
@@ -184,6 +191,11 @@ const GradesAssignmentsPage: React.FC = () => {
   const handleCloseSubmissionList = () => {
     setIsSubmissionListOpen(false);
     setSelectedAssignment(null);
+  };
+
+  const handleGradeSubmitted = () => {
+    // Handle after grade is submitted
+    handleCloseGradingInterface();
   };
 
   return (
@@ -287,16 +299,17 @@ const GradesAssignmentsPage: React.FC = () => {
 
       <CreateAssignmentQuizDialog
         open={isDialogOpen}
-        onClose={handleCloseDialog}
-        onCreate={handleCreateAssignment}
+        onOpenChange={setIsDialogOpen}
         courses={courses}
+        onAssignmentCreated={handleCreateAssignment}
       />
 
-      {selectedAssignment && (
+      {selectedAssignment && selectedStudentId && (
         <GradingInterface
-          open={isGradingInterfaceOpen}
-          onClose={handleCloseGradingInterface}
           assignment={selectedAssignment}
+          studentId={selectedStudentId}
+          onBack={handleCloseGradingInterface}
+          onGradeSubmitted={handleGradeSubmitted}
         />
       )}
 
