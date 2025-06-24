@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { BookOpen, Plus, Search, Users, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const courses = [
   {
@@ -35,6 +36,12 @@ const courses = [
 ];
 
 export default function CoursesPage() {
+  const navigate = useNavigate();
+
+  const handleViewCourse = (courseId: number) => {
+    navigate(`/courses/${courseId}`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -93,7 +100,11 @@ export default function CoursesPage() {
                     </div>
                   </div>
                   <div className="mt-4 pt-4 border-t">
-                    <Button size="sm" className="w-full">
+                    <Button 
+                      size="sm" 
+                      className="w-full"
+                      onClick={() => handleViewCourse(course.id)}
+                    >
                       View Course
                     </Button>
                   </div>

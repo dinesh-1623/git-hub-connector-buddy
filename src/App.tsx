@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
@@ -8,6 +7,7 @@ import { AdminLayout } from './components/admin/AdminLayout';
 import DashboardPage from './pages/admin/DashboardPage';
 import UsersPage from './pages/admin/UsersPage';
 import CoursesPage from './pages/admin/CoursesPage';
+import CourseDetailPage from './pages/admin/CourseDetailPage';
 import ReportsPage from './pages/admin/ReportsPage';
 import SettingsPage from './pages/admin/SettingsPage';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -126,6 +126,7 @@ const AppContent: React.FC = () => {
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="courses" element={<CoursesPage />} />
+        <Route path="courses/:id" element={<CourseDetailPage />} />
         <Route path="grade-assignments" element={<GradesAssignmentsPage />} />
         <Route path="reports" element={<ReportsPage />} />
         <Route path="settings" element={<SettingsPage />} />
