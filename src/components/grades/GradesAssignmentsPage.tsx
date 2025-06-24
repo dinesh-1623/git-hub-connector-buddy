@@ -195,6 +195,13 @@ const GradesAssignmentsPage: React.FC = () => {
     handleCloseGradingInterface();
   };
 
+  const handleGradeStudent = (studentId: string) => {
+    setSelectedStudentId(studentId);
+    setIsSubmissionListOpen(false);
+    // Open grading interface for the specific student
+    // You can add logic here to switch to grading mode
+  };
+
   return (
     <div className="container mx-auto p-4">
       <Card>
@@ -310,11 +317,11 @@ const GradesAssignmentsPage: React.FC = () => {
         />
       )}
 
-      {selectedAssignment && (
+      {selectedAssignment && isSubmissionListOpen && (
         <StudentSubmissionList
-          open={isSubmissionListOpen}
-          onClose={handleCloseSubmissionList}
           assignment={selectedAssignment}
+          onBack={handleCloseSubmissionList}
+          onGradeStudent={handleGradeStudent}
         />
       )}
     </div>
