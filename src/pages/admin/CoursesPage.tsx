@@ -7,46 +7,13 @@ import { BookOpen, Plus, Search, Users, Clock, Play, Edit, Trash2 } from 'lucide
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'sonner';
-
-const courses = [
-  {
-    id: 1,
-    title: 'Introduction to Programming',
-    description: 'Learn the basics of programming with Python',
-    instructor: 'Jane Smith',
-    students: 45,
-    duration: '8 weeks',
-    status: 'active',
-    thumbnail: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=250&fit=crop',
-    videoUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=250&fit=crop',
-  },
-  {
-    id: 2,
-    title: 'Advanced Mathematics',
-    description: 'Calculus and advanced mathematical concepts',
-    instructor: 'Dr. Wilson',
-    students: 32,
-    duration: '12 weeks',
-    status: 'active',
-    thumbnail: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=250&fit=crop',
-    videoUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=250&fit=crop',
-  },
-  {
-    id: 3,
-    title: 'Web Development',
-    description: 'Build modern web applications',
-    instructor: 'Mike Johnson',
-    students: 28,
-    duration: '10 weeks',
-    status: 'draft',
-    thumbnail: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=250&fit=crop',
-    videoUrl: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=250&fit=crop',
-  },
-];
+import { courses } from '@/lib/coursesData';
+import { CreateCourseDialog } from '@/components/dialogs/CreateCourseDialog';
 
 export default function CoursesPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const handleViewCourse = (courseId: number) => {
     console.log('Navigating to course:', courseId);
@@ -54,14 +21,13 @@ export default function CoursesPage() {
   };
 
   const handleCreateCourse = () => {
-    console.log('Creating new course');
-    toast.success('Course creation dialog would open here');
-    // In a real app, this would open a course creation dialog
+    console.log('Opening course creation dialog');
+    setIsCreateDialogOpen(true);
   };
 
   const handlePreviewCourse = (course: any) => {
     console.log('Previewing course:', course.title);
-    toast.info(`Previewing course: ${course.title}`);
+    toast.info(`Opening preview for: ${course.title}`);
     // In a real app, this would open a preview modal or navigate to preview
   };
 
@@ -129,6 +95,10 @@ export default function CoursesPage() {
                     src={course.thumbnail} 
                     alt={course.title}
                     className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop&crop=center';
+                    }}
                   />
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button 
@@ -150,10 +120,23 @@ export default function CoursesPage() {
                   >
                     {course.status}
                   </Badge>
+                  {course.price && (
+                    <Badge 
+                      variant="outline"
+                      className="absolute top-3 left-3 bg-white/90"
+                    >
+                      ${course.price}
+                    </Badge>
+                  )}
                 </div>
                 <CardHeader>
                   <div className="flex items-center gap-2 mb-2">
                     <BookOpen className="h-5 w-5 text-primary" />
+                    {course.level && (
+                      <Badge variant="outline" className="text-xs">
+                        {course.level}
+                      </Badge>
+                    )}
                   </div>
                   <CardTitle className="text-lg line-clamp-2">{course.title}</CardTitle>
                   <CardDescription className="line-clamp-2">{course.description}</CardDescription>
@@ -207,6 +190,11 @@ export default function CoursesPage() {
           </div>
         </CardContent>
       </Card>
+
+      <CreateCourseDialog 
+        open={isCreateDialogOpen} 
+        onOpenChange={setIsCreateDialogOpen} 
+      />
     </div>
   );
 }

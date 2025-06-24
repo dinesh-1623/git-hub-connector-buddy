@@ -2,59 +2,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, BookOpen, Users, Clock, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, Users, Clock, Edit, Trash2, DollarSign, Calendar } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-
-const courses = [
-  {
-    id: 1,
-    title: 'Introduction to Programming',
-    description: 'Learn the basics of programming with Python',
-    instructor: 'Jane Smith',
-    students: 45,
-    duration: '8 weeks',
-    status: 'active',
-    fullDescription: 'This comprehensive course introduces students to the fundamentals of programming using Python. Students will learn variables, control structures, functions, and basic data structures.',
-    lessons: 24,
-    assignments: 8,
-    startDate: '2024-01-15',
-    endDate: '2024-03-15',
-  },
-  {
-    id: 2,
-    title: 'Advanced Mathematics',
-    description: 'Calculus and advanced mathematical concepts',
-    instructor: 'Dr. Wilson',
-    students: 32,
-    duration: '12 weeks',
-    status: 'active',
-    fullDescription: 'An advanced mathematics course covering calculus, linear algebra, and statistical analysis. Perfect for students pursuing STEM fields.',
-    lessons: 36,
-    assignments: 12,
-    startDate: '2024-02-01',
-    endDate: '2024-05-01',
-  },
-  {
-    id: 3,
-    title: 'Web Development',
-    description: 'Build modern web applications',
-    instructor: 'Mike Johnson',
-    students: 28,
-    duration: '10 weeks',
-    status: 'draft',
-    fullDescription: 'Learn to build modern web applications using HTML, CSS, JavaScript, and React. This hands-on course covers both frontend and backend development.',
-    lessons: 30,
-    assignments: 10,
-    startDate: '2024-03-01',
-    endDate: '2024-05-15',
-  },
-];
+import { getCourseById } from '@/lib/coursesData';
+import { CourseVideoPlayer } from '@/components/CourseVideoPlayer';
 
 export default function CourseDetailPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   
-  const course = courses.find(c => c.id === parseInt(id || '0'));
+  const course = getCourseById(parseInt(id || '0'));
 
   if (!course) {
     return (
@@ -87,8 +44,13 @@ export default function CourseDetailPage() {
             Back to Courses
           </Button>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{course.title}</h1>
-            <p className="text-muted-foreground mt-1">Course Details</p>
+            <div className="flex items-center gap-2 mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{course.title}</h1>
+              <Badge variant={course.status === 'active' ? 'default' : 'secondary'}>
+                {course.status}
+              </Badge>
+            </div>
+            <p className="text-muted-foreground">Course Details</p>
           </div>
         </div>
         <div className="flex gap-3">
@@ -105,14 +67,13 @@ export default function CourseDetailPage() {
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
+          {/* Course Video Player */}
+          <CourseVideoPlayer videoUrl={course.videoUrl} title={course.title} />
+
+          {/* Course Information */}
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Course Information</CardTitle>
-                <Badge variant={course.status === 'active' ? 'default' : 'secondary'}>
-                  {course.status}
-                </Badge>
-              </div>
+              <CardTitle>Course Information</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
@@ -130,6 +91,16 @@ export default function CourseDetailPage() {
                     <p className="text-muted-foreground">{course.duration}</p>
                   </div>
                   <div>
+                    <h4 className="font-medium mb-1">Level</h4>
+                    <Badge variant="outline">{course.level}</Badge>
+                  </div>
+                  {course.price && (
+                    <div>
+                      <h4 className="font-medium mb-1">Price</h4>
+                      <p className="text-muted-foreground">${course.price}</p>
+                    </div>
+                  )}
+                  <div>
                     <h4 className="font-medium mb-1">Start Date</h4>
                     <p className="text-muted-foreground">{course.startDate}</p>
                   </div>
@@ -144,6 +115,25 @@ export default function CourseDetailPage() {
         </div>
 
         <div className="space-y-6">
+          {/* Course Thumbnail */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Course Thumbnail</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <img 
+                src={course.thumbnail} 
+                alt={course.title}
+                className="w-full h-48 object-cover rounded-lg border"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop&crop=center';
+                }}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Quick Stats */}
           <Card>
             <CardHeader>
               <CardTitle>Quick Stats</CardTitle>
@@ -171,10 +161,20 @@ export default function CourseDetailPage() {
                   </div>
                   <span className="font-semibold">{course.assignments}</span>
                 </div>
+                {course.price && (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <DollarSign className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <span className="text-sm">Price</span>
+                    </div>
+                    <span className="font-semibold">${course.price}</span>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
 
+          {/* Actions */}
           <Card>
             <CardHeader>
               <CardTitle>Actions</CardTitle>
@@ -184,6 +184,10 @@ export default function CourseDetailPage() {
                 <Button className="w-full">View Students</Button>
                 <Button variant="outline" className="w-full">Manage Content</Button>
                 <Button variant="outline" className="w-full">View Analytics</Button>
+                <Button variant="outline" className="w-full">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Schedule
+                </Button>
               </div>
             </CardContent>
           </Card>
