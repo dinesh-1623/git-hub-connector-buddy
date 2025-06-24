@@ -35,6 +35,9 @@ import {
   Plus,
   LogOut,
   User,
+  MessageSquare,
+  MessageCircle,
+  GraduationCap,
 } from 'lucide-react';
 
 const getNavigationItems = (userRole: string) => {
@@ -51,9 +54,24 @@ const getNavigationItems = (userRole: string) => {
     },
   ];
 
-  // Add admin/teacher only items
+  // Add teacher/admin specific items
   if (userRole === 'admin' || userRole === 'teacher') {
     baseItems.push(
+      {
+        title: 'Grade Assignments',
+        url: '/grades',
+        icon: GraduationCap,
+      },
+      {
+        title: 'Messages',
+        url: '/messages',
+        icon: MessageSquare,
+      },
+      {
+        title: 'Discussions',
+        url: '/discussions',
+        icon: MessageCircle,
+      },
       {
         title: 'Users',
         url: '/users',
