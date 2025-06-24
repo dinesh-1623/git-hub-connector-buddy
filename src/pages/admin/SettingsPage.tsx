@@ -1,12 +1,11 @@
 
-import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Settings, Bell, Shield, Database, Mail } from 'lucide-react';
+import { Settings, Bell, Shield } from 'lucide-react';
 
 export default function SettingsPage() {
   return (

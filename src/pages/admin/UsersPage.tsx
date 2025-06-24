@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,7 +26,7 @@ const users = [
     email: 'john.doe@example.com',
     role: 'student',
     status: 'active',
-    avatar: null,
+    avatar: undefined,
     lastActive: '2 hours ago',
   },
   {
@@ -36,7 +35,7 @@ const users = [
     email: 'jane.smith@example.com',
     role: 'teacher',
     status: 'active',
-    avatar: null,
+    avatar: undefined,
     lastActive: '5 minutes ago',
   },
   {
@@ -45,7 +44,7 @@ const users = [
     email: 'mike.johnson@example.com',
     role: 'student',
     status: 'inactive',
-    avatar: null,
+    avatar: undefined,
     lastActive: '1 day ago',
   },
   {
@@ -54,7 +53,7 @@ const users = [
     email: 'sarah.wilson@example.com',
     role: 'admin',
     status: 'active',
-    avatar: null,
+    avatar: undefined,
     lastActive: '10 minutes ago',
   },
 ];
