@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -14,9 +15,6 @@ import StudentSubmissionList from './StudentSubmissionList';
 import AssignmentStatistics from './AssignmentStatistics';
 import AssignmentFilters from './AssignmentFilters';
 import AssignmentGrid from './AssignmentGrid';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/context/AuthContext';
-import { toast } from 'sonner';
 
 interface Assignment {
   id: string;
@@ -95,9 +93,28 @@ const mockAssignments: Assignment[] = [
   },
 ];
 
+const mockCourses: Course[] = [
+  {
+    id: '101',
+    name: 'Introduction to React',
+    title: 'Introduction to React',
+    description: 'An introductory course to React development.',
+    credits: 3,
+    teacher_id: 'T123'
+  },
+  {
+    id: '102',
+    name: 'Advanced JavaScript',
+    title: 'Advanced JavaScript',
+    description: 'A deep dive into advanced JavaScript concepts.',
+    credits: 4,
+    teacher_id: 'T124'
+  },
+];
+
 const GradesAssignmentsPage: React.FC = () => {
   const [assignments] = useState<Assignment[]>(mockAssignments);
-  const [courses, setCourses] = useState<Course[]>([]);
+  const [courses] = useState<Course[]>(mockCourses);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
   const [selectedCourse, setSelectedCourse] = useState<string>('all');
@@ -105,57 +122,10 @@ const GradesAssignmentsPage: React.FC = () => {
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
   const [selectedStudentId, setSelectedStudentId] = useState<string>('');
   const [isSubmissionListOpen, setIsSubmissionListOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  
-  const { user } = useAuth();
 
   useEffect(() => {
     console.log('GradesAssignmentsPage: Component mounted');
-    fetchCourses();
-  }, [user]);
-
-  const fetchCourses = async () => {
-    console.log('🔍 GradesAssignmentsPage: Fetching courses');
-    
-    if (!user) {
-      console.log('🔍 GradesAssignmentsPage: No user found, skipping course fetch');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const { data: coursesData, error } = await supabase
-        .from('courses')
-        .select('id, title, description, instructor_id')
-        .eq('instructor_id', user.id);
-
-      if (error) {
-        console.error('❌ GradesAssignmentsPage: Error fetching courses:', error);
-        toast.error('Failed to load courses');
-        setLoading(false);
-        return;
-      }
-
-      console.log('✅ GradesAssignmentsPage: Courses fetched:', coursesData);
-      
-      // Transform courses data to match the expected interface
-      const transformedCourses: Course[] = (coursesData || []).map(course => ({
-        id: course.id,
-        name: course.title, // Using title as name
-        title: course.title,
-        description: course.description || '',
-        credits: 3, // Default value since it's not in the database
-        teacher_id: course.instructor_id || ''
-      }));
-
-      setCourses(transformedCourses);
-    } catch (error) {
-      console.error('❌ GradesAssignmentsPage: Exception fetching courses:', error);
-      toast.error('Failed to load courses');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, []);
 
   const filteredAssignments = assignments.filter(assignment => {
     const searchFilter = assignment.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -175,11 +145,9 @@ const GradesAssignmentsPage: React.FC = () => {
     setIsDialogOpen(false);
   };
 
-  const handleCreateAssignment = (assignmentId: string) => {
-    console.log('Assignment created successfully with ID:', assignmentId);
-    toast.success('Assignment created successfully!');
+  const handleCreateAssignment = () => {
+    console.log('Assignment created successfully');
     handleCloseDialog();
-    // Optionally refresh assignments list here
   };
 
   const handleOpenGradingInterface = (assignment: Assignment) => {
@@ -217,17 +185,6 @@ const GradesAssignmentsPage: React.FC = () => {
     setIsSubmissionListOpen(false);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading courses...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Hero Section */}
@@ -246,20 +203,11 @@ const GradesAssignmentsPage: React.FC = () => {
               onClick={handleOpenDialog}
               className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               size="lg"
-              disabled={courses.length === 0}
             >
               <Plus className="mr-2 h-5 w-5" />
               Create Assignment
             </Button>
           </div>
-          
-          {courses.length === 0 && (
-            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-yellow-800 text-sm">
-                No courses found. You need to create courses before you can create assignments.
-              </p>
-            </div>
-          )}
         </div>
       </div>
 

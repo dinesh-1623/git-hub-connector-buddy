@@ -126,12 +126,6 @@ const CreateAssignmentQuizDialog: React.FC<CreateAssignmentQuizDialogProps> = ({
       return;
     }
 
-    if (!data.courseId) {
-      console.error('❌ CreateAssignmentQuizDialog: No course selected');
-      toast.error('Please select a course');
-      return;
-    }
-
     setSubmitting(true);
     
     try {
@@ -150,22 +144,6 @@ const CreateAssignmentQuizDialog: React.FC<CreateAssignmentQuizDialogProps> = ({
 
       console.log('🔍 CreateAssignmentQuizDialog: Assignment data to insert:', assignmentData);
 
-      // First, verify the course exists
-      console.log('🔍 CreateAssignmentQuizDialog: Verifying course exists...');
-      const { data: courseCheck, error: courseError } = await supabase
-        .from('courses')
-        .select('id')
-        .eq('id', data.courseId)
-        .single();
-
-      if (courseError || !courseCheck) {
-        console.error('❌ CreateAssignmentQuizDialog: Course not found:', courseError);
-        toast.error('Selected course not found. Please refresh and try again.');
-        return;
-      }
-
-      console.log('✅ CreateAssignmentQuizDialog: Course verified:', courseCheck);
-
       // Insert the assignment into the database
       console.log('🔍 CreateAssignmentQuizDialog: Executing Supabase insert...');
       const { data: assignment, error } = await supabase
@@ -182,15 +160,7 @@ const CreateAssignmentQuizDialog: React.FC<CreateAssignmentQuizDialogProps> = ({
           hint: error.hint,
           code: error.code
         });
-        
-        // Provide more specific error messages
-        if (error.code === '23503') {
-          toast.error('Selected course is invalid. Please refresh and try again.');
-        } else if (error.code === '42501') {
-          toast.error('You do not have permission to create assignments for this course.');
-        } else {
-          toast.error(`Failed to create assignment: ${error.message}`);
-        }
+        toast.error('Failed to create assignment. Please try again.');
         return;
       }
 
@@ -297,7 +267,7 @@ const CreateAssignmentQuizDialog: React.FC<CreateAssignmentQuizDialogProps> = ({
                       ) : (
                         courses.map(course => (
                           <SelectItem key={course.id} value={course.id}>
-                            {course.title}
+                            {course.code} - {course.title}
                           </SelectItem>
                         ))
                       )}
@@ -496,7 +466,7 @@ const CreateAssignmentQuizDialog: React.FC<CreateAssignmentQuizDialogProps> = ({
             </Button>
             <Button 
               type="submit" 
-              disabled={submitting || courses.length === 0}
+              disabled={submitting}
               className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
             >
               <Save className="h-4 w-4 mr-2" />
