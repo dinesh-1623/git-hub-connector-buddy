@@ -47,6 +47,8 @@ export const discussionsService = {
 
     return data?.map(discussion => ({
       ...discussion,
+      author_role: discussion.author_role as 'student' | 'teacher' | 'admin',
+      status: discussion.status as 'open' | 'closed',
       reply_count: discussion.discussion_replies?.[0]?.count || 0
     })) || [];
   },
@@ -79,8 +81,15 @@ export const discussionsService = {
     }
 
     return {
-      discussion: discussionResult.data,
-      replies: repliesResult.data || []
+      discussion: {
+        ...discussionResult.data,
+        author_role: discussionResult.data.author_role as 'student' | 'teacher' | 'admin',
+        status: discussionResult.data.status as 'open' | 'closed'
+      },
+      replies: repliesResult.data?.map(reply => ({
+        ...reply,
+        author_role: reply.author_role as 'student' | 'teacher' | 'admin'
+      })) || []
     };
   },
 
@@ -123,7 +132,11 @@ export const discussionsService = {
       throw error;
     }
 
-    return data;
+    return {
+      ...data,
+      author_role: data.author_role as 'student' | 'teacher' | 'admin',
+      status: data.status as 'open' | 'closed'
+    };
   },
 
   // Add a reply to a discussion
@@ -160,6 +173,9 @@ export const discussionsService = {
       throw error;
     }
 
-    return data;
+    return {
+      ...data,
+      author_role: data.author_role as 'student' | 'teacher' | 'admin'
+    };
   }
 };
