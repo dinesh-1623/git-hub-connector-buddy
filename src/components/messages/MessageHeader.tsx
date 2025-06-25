@@ -1,23 +1,19 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Reply, Forward, Archive, Trash2, Clock, User } from 'lucide-react';
-import { Message } from '@/pages/admin/MessagesPage';
+import { MoreHorizontal, Reply, Forward, Archive, Trash2 } from 'lucide-react';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Message } from '@/pages/admin/MessagesPage';
 import { useMessageActions } from './MessageActions';
 
 interface MessageHeaderProps {
   message: Message;
+  onMessageDeleted?: () => void;
 }
 
 const getRoleBadgeVariant = (role: string) => {
@@ -33,132 +29,76 @@ const getRoleBadgeVariant = (role: string) => {
   }
 };
 
-const formatDateTime = (dateString: string) => {
+const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  return {
-    dayDate: date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    }),
-    time: date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  };
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 };
 
-export function MessageHeader({ message }: MessageHeaderProps) {
-  const { handleReply, handleForward, handleArchive, handleDelete } = useMessageActions(message);
-  const { dayDate, time } = formatDateTime(message.sent_at);
+export function MessageHeader({ message, onMessageDeleted }: MessageHeaderProps) {
+  const { handleReply, handleForward, handleArchive, handleDelete } = useMessageActions({
+    message,
+    onMessageDeleted
+  });
 
   return (
-    <div className="border-b border-gray-200 bg-gradient-to-r from-white to-gray-50 p-6">
-      <div className="flex items-start justify-between mb-6">
+    <div className="border-b border-gray-200 p-4 bg-white">
+      <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4 line-clamp-2">
-            {message.subject}
-          </h2>
+          <div className="flex items-center gap-2 mb-2">
+            <h2 className="text-lg font-semibold text-gray-900 truncate">
+              {message.subject}
+            </h2>
+          </div>
           
-          {/* Enhanced Sender Information */}
-          <div className="bg-white rounded-lg border border-gray-100 p-4 shadow-sm">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
-                <User className="h-5 w-5 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg font-semibold text-gray-900 truncate">
-                    {message.sender_name}
-                  </span>
-                  <Badge 
-                    variant={getRoleBadgeVariant(message.sender_role)}
-                    className="text-xs px-2.5 py-1 capitalize font-medium shadow-sm"
-                  >
-                    {message.sender_role}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-            
-            {/* Enhanced Date and Time */}
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Clock className="h-4 w-4 text-gray-400" />
-              <div className="flex flex-col">
-                <span className="font-medium text-gray-700">{dayDate}</span>
-                <span className="text-xs text-gray-500">at {time}</span>
-              </div>
-              {!message.read && (
-                <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 border-blue-200 ml-2">
-                  Unread
-                </Badge>
-              )}
-            </div>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <span className="font-medium">{message.sender_name}</span>
+            <Badge 
+              variant={getRoleBadgeVariant(message.sender_role)}
+              className="text-xs px-1.5 py-0.5 capitalize"
+            >
+              {message.sender_role}
+            </Badge>
+            <span className="text-gray-400">•</span>
+            <span>{formatDate(message.sent_at)}</span>
           </div>
         </div>
-        
-        {/* Enhanced Action Buttons */}
-        <div className="flex items-center gap-2 ml-6 flex-wrap">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleReply}
-            className="gap-2 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all duration-200 shadow-sm"
-          >
-            <Reply className="h-4 w-4" />
+
+        <div className="flex items-center gap-2 ml-4">
+          <Button variant="outline" size="sm" onClick={handleReply}>
+            <Reply className="h-4 w-4 mr-1" />
             Reply
           </Button>
           
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleForward}
-            className="gap-2 hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition-all duration-200 shadow-sm"
-          >
-            <Forward className="h-4 w-4" />
-            Forward
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleArchive}
-            className="gap-2 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-700 transition-all duration-200 shadow-sm"
-          >
-            <Archive className="h-4 w-4" />
-            Archive
-          </Button>
-          
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-200 transition-all duration-200 shadow-sm"
-              >
-                <Trash2 className="h-4 w-4" />
-                Delete
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <MoreHorizontal className="h-4 w-4" />
               </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete Message</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to delete this message? This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDelete}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleForward}>
+                <Forward className="h-4 w-4 mr-2" />
+                Forward
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleArchive}>
+                <Archive className="h-4 w-4 mr-2" />
+                Archive
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={handleDelete}
+                className="text-red-600 hover:text-red-700"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>

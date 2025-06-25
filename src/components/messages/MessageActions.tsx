@@ -1,8 +1,14 @@
 
 import { toast } from 'sonner';
 import { Message } from '@/pages/admin/MessagesPage';
+import { messagesService } from '@/services/messagesService';
 
-export const useMessageActions = (message: Message) => {
+interface UseMessageActionsProps {
+  message: Message;
+  onMessageDeleted?: () => void;
+}
+
+export const useMessageActions = ({ message, onMessageDeleted }: UseMessageActionsProps) => {
   const handleReply = () => {
     console.log('Reply to message:', message.id);
     toast.success(`Starting reply to ${message.sender_name}`, {
@@ -27,12 +33,24 @@ export const useMessageActions = (message: Message) => {
     // TODO: Update message status to archived
   };
 
-  const handleDelete = () => {
-    console.log('Delete message:', message.id);
-    toast.success("Message deleted successfully", {
-      description: "The message has been permanently removed"
-    });
-    // TODO: Remove message from list and update state
+  const handleDelete = async () => {
+    try {
+      console.log('Delete message:', message.id);
+      await messagesService.deleteMessage(message.id);
+      toast.success("Message deleted successfully", {
+        description: "The message has been permanently removed"
+      });
+      
+      // Call the callback to refresh the message list
+      if (onMessageDeleted) {
+        onMessageDeleted();
+      }
+    } catch (error) {
+      console.error('Failed to delete message:', error);
+      toast.error("Failed to delete message", {
+        description: "Please try again"
+      });
+    }
   };
 
   return {

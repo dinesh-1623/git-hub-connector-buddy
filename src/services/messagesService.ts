@@ -35,17 +35,17 @@ export const messagesService = {
     console.log('Fetched messages:', data);
 
     return data?.map(msg => ({
-      id: msg.id,
-      sender_id: msg.sender_id,
-      sender_name: msg.sender_name,
-      sender_role: msg.sender_role,
-      recipient_id: msg.recipient_id,
-      subject: msg.subject,
-      content: msg.content,
-      sent_at: msg.sent_at,
-      read: msg.read,
-      type: msg.type as 'inbox' | 'sent'
-    })) || [];
+      id: msg.id || '',
+      sender_id: msg.sender_id || '',
+      sender_name: msg.sender_name || '',
+      sender_role: (msg.sender_role as 'student' | 'teacher' | 'admin') || 'student',
+      recipient_id: msg.recipient_id || '',
+      subject: msg.subject || '',
+      content: msg.content || '',
+      sent_at: msg.sent_at || '',
+      read: msg.read || false,
+      type: (msg.type as 'inbox' | 'sent') || 'inbox'
+    })).filter(msg => msg.id) || [];
   },
 
   // Send a new message
@@ -105,6 +105,23 @@ export const messagesService = {
       console.error('Error marking message as read:', error);
       throw error;
     }
+  },
+
+  // Delete a message
+  async deleteMessage(messageId: string): Promise<void> {
+    console.log('Deleting message:', messageId);
+
+    const { error } = await supabase
+      .from('messages')
+      .delete()
+      .eq('id', messageId);
+
+    if (error) {
+      console.error('Error deleting message:', error);
+      throw error;
+    }
+
+    console.log('Message deleted successfully');
   },
 
   // Get available users for messaging

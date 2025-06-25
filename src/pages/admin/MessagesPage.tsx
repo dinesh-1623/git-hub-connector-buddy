@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { MessageList } from '@/components/messages/MessageList';
 import { MessageView } from '@/components/messages/MessageView';
@@ -111,6 +110,13 @@ export function MessagesPage() {
     }
   };
 
+  const handleMessageDeleted = async () => {
+    // Reload messages after deletion
+    await loadMessages();
+    // Clear selected message if it was deleted
+    setSelectedMessage(null);
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col h-full">
@@ -185,7 +191,10 @@ export function MessagesPage() {
 
           {/* Right Panel - Message View */}
           <div className="flex-1">
-            <MessageView message={selectedMessage} />
+            <MessageView 
+              message={selectedMessage} 
+              onMessageDeleted={handleMessageDeleted}
+            />
           </div>
         </div>
       </div>
