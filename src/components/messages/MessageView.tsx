@@ -17,7 +17,7 @@ export function MessageView({ message, onMessageDeleted }: MessageViewProps) {
   return (
     <div className="flex flex-col h-full bg-white">
       <MessageHeader message={message} onMessageDeleted={onMessageDeleted} />
-      <MessageContent message={message} />
+      <MessageContent message={message} onMessageDeleted={onMessageDeleted} />
     </div>
   );
 }

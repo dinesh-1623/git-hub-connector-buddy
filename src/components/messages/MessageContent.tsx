@@ -11,11 +11,13 @@ import { useMessageActions } from './MessageActions';
 
 interface MessageContentProps {
   message: Message;
+  onMessageDeleted?: () => void;
 }
 
-export function MessageContent({ message }: MessageContentProps) {
+export function MessageContent({ message, onMessageDeleted }: MessageContentProps) {
   const { handleReply, handleForward, handleArchive, handleDelete } = useMessageActions({ 
-    message 
+    message,
+    onMessageDeleted
   });
 
   return (
