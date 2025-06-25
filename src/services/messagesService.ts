@@ -107,18 +107,29 @@ export const messagesService = {
     }
   },
 
-  // Delete a message
+  // Delete a message - now using user_messages table for consistency
   async deleteMessage(messageId: string): Promise<void> {
     console.log('Deleting message:', messageId);
 
-    const { error } = await supabase
-      .from('messages')
+    // First try to delete from user_messages table since that's where we fetch from
+    const { error: userMessagesError } = await supabase
+      .from('user_messages')
       .delete()
       .eq('id', messageId);
 
-    if (error) {
-      console.error('Error deleting message:', error);
-      throw error;
+    if (userMessagesError) {
+      console.log('Could not delete from user_messages, trying messages table:', userMessagesError);
+      
+      // If user_messages doesn't support delete, try messages table
+      const { error: messagesError } = await supabase
+        .from('messages')
+        .delete()
+        .eq('id', messageId);
+
+      if (messagesError) {
+        console.error('Error deleting message from both tables:', messagesError);
+        throw messagesError;
+      }
     }
 
     console.log('Message deleted successfully');
