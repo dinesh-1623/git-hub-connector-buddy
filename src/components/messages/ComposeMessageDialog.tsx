@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Send, X } from 'lucide-react';
+import { messagesService } from '@/services/messagesService';
+import { toast } from 'sonner';
 
 interface ComposeMessageDialogProps {
   isOpen: boolean;
@@ -19,11 +21,39 @@ interface ComposeMessageDialogProps {
   onSend: (messageData: { recipient: string; subject: string; content: string }) => void;
 }
 
+interface User {
+  id: string;
+  name: string;
+  role: string;
+}
+
 export function ComposeMessageDialog({ isOpen, onClose, onSend }: ComposeMessageDialogProps) {
   const [recipient, setRecipient] = useState('');
   const [subject, setSubject] = useState('');
   const [content, setContent] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+
+  // Load available users when dialog opens
+  useEffect(() => {
+    if (isOpen) {
+      loadUsers();
+    }
+  }, [isOpen]);
+
+  const loadUsers = async () => {
+    try {
+      setLoadingUsers(true);
+      const availableUsers = await messagesService.getAvailableUsers();
+      setUsers(availableUsers);
+    } catch (error) {
+      console.error('Failed to load users:', error);
+      toast.error('Failed to load users');
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
 
   const handleSend = async () => {
     if (!recipient || !subject || !content) {
@@ -32,24 +62,19 @@ export function ComposeMessageDialog({ isOpen, onClose, onSend }: ComposeMessage
 
     setIsSending(true);
     
-    // Simulate sending delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log('Sending message:', {
-      recipient,
-      subject,
-      content,
-    });
-
-    // Call the onSend prop to actually send the message
-    onSend({ recipient, subject, content });
-    
-    // Reset form and close dialog
-    setRecipient('');
-    setSubject('');
-    setContent('');
-    setIsSending(false);
-    onClose();
+    try {
+      await onSend({ recipient, subject, content });
+      
+      // Reset form and close dialog
+      setRecipient('');
+      setSubject('');
+      setContent('');
+      onClose();
+    } catch (error) {
+      console.error('Error in handleSend:', error);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const handleClose = () => {
@@ -60,15 +85,6 @@ export function ComposeMessageDialog({ isOpen, onClose, onSend }: ComposeMessage
       onClose();
     }
   };
-
-  // Mock users for recipient selection
-  const mockUsers = [
-    { id: '1', name: 'Dr. Sarah Johnson', role: 'teacher' },
-    { id: '2', name: 'Michael Chen', role: 'admin' },
-    { id: '3', name: 'Emily Rodriguez', role: 'student' },
-    { id: '4', name: 'Prof. David Wilson', role: 'teacher' },
-    { id: '5', name: 'Lisa Park', role: 'student' },
-  ];
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -92,12 +108,12 @@ export function ComposeMessageDialog({ isOpen, onClose, onSend }: ComposeMessage
           {/* Recipient */}
           <div className="space-y-2">
             <Label htmlFor="recipient">To</Label>
-            <Select value={recipient} onValueChange={setRecipient}>
+            <Select value={recipient} onValueChange={setRecipient} disabled={loadingUsers}>
               <SelectTrigger>
-                <SelectValue placeholder="Select recipient" />
+                <SelectValue placeholder={loadingUsers ? "Loading users..." : "Select recipient"} />
               </SelectTrigger>
               <SelectContent>
-                {mockUsers.map((user) => (
+                {users.map((user) => (
                   <SelectItem key={user.id} value={user.id}>
                     <div className="flex items-center gap-2">
                       <span>{user.name}</span>

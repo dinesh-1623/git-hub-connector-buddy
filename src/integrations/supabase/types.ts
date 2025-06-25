@@ -30,6 +30,54 @@ export type Database = {
         }
         Relationships: []
       }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          read: boolean
+          recipient_id: string
+          recipient_name: string
+          recipient_role: string
+          sender_id: string
+          sender_name: string
+          sender_role: string
+          sent_at: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          read?: boolean
+          recipient_id: string
+          recipient_name: string
+          recipient_role: string
+          sender_id: string
+          sender_name: string
+          sender_role: string
+          sent_at?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          read?: boolean
+          recipient_id?: string
+          recipient_name?: string
+          recipient_role?: string
+          sender_id?: string
+          sender_name?: string
+          sender_role?: string
+          sent_at?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -73,7 +121,57 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_messages: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string | null
+          read: boolean | null
+          recipient_id: string | null
+          recipient_name: string | null
+          recipient_role: string | null
+          sender_id: string | null
+          sender_name: string | null
+          sender_role: string | null
+          sent_at: string | null
+          subject: string | null
+          type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string | null
+          read?: boolean | null
+          recipient_id?: string | null
+          recipient_name?: string | null
+          recipient_role?: string | null
+          sender_id?: string | null
+          sender_name?: string | null
+          sender_role?: string | null
+          sent_at?: string | null
+          subject?: string | null
+          type?: never
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string | null
+          read?: boolean | null
+          recipient_id?: string | null
+          recipient_name?: string | null
+          recipient_role?: string | null
+          sender_id?: string | null
+          sender_name?: string | null
+          sender_role?: string | null
+          sent_at?: string | null
+          subject?: string | null
+          type?: never
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
