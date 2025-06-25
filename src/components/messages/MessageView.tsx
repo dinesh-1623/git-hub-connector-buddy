@@ -1,4 +1,5 @@
 
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Reply, Forward, Archive, Trash2, Clock, User } from 'lucide-react';
@@ -42,11 +43,11 @@ const getRoleBadgeVariant = (role: string) => {
 const formatDateTime = (dateString: string) => {
   const date = new Date(dateString);
   return {
-    date: date.toLocaleDateString('en-US', {
+    dayDate: date.toLocaleDateString('en-US', {
       weekday: 'long',
-      year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
+      year: 'numeric'
     }),
     time: date.toLocaleTimeString('en-US', {
       hour: '2-digit',
@@ -106,7 +107,7 @@ export function MessageView({ message }: MessageViewProps) {
     // TODO: Remove message from list and update state
   };
 
-  const { date, time } = formatDateTime(message.sent_at);
+  const { dayDate, time } = formatDateTime(message.sent_at);
 
   return (
     <div className="flex flex-col h-full bg-white">
@@ -142,12 +143,9 @@ export function MessageView({ message }: MessageViewProps) {
               {/* Enhanced Date and Time */}
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <Clock className="h-4 w-4 text-gray-400" />
-                <div className="flex items-center gap-1">
-                  <span className="font-medium text-gray-700">{date}</span>
-                  <span className="text-gray-400">at</span>
-                  <span className="font-medium text-gray-700 bg-gray-100 px-2 py-1 rounded-md">
-                    {time}
-                  </span>
+                <div className="flex flex-col">
+                  <span className="font-medium text-gray-700">{dayDate}</span>
+                  <span className="text-xs text-gray-500">at {time}</span>
                 </div>
                 {!message.read && (
                   <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 border-blue-200 ml-2">
@@ -256,3 +254,4 @@ export function MessageView({ message }: MessageViewProps) {
     </div>
   );
 }
+
