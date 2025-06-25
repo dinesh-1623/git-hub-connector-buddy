@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MessageList } from '@/components/messages/MessageList';
 import { MessageView } from '@/components/messages/MessageView';
 import { ComposeMessageDialog } from '@/components/messages/ComposeMessageDialog';
