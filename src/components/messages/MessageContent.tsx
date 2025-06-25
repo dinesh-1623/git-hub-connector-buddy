@@ -14,7 +14,9 @@ interface MessageContentProps {
 }
 
 export function MessageContent({ message }: MessageContentProps) {
-  const { handleReply, handleForward, handleArchive, handleDelete } = useMessageActions(message);
+  const { handleReply, handleForward, handleArchive, handleDelete } = useMessageActions({ 
+    message 
+  });
 
   return (
     <ContextMenu>
