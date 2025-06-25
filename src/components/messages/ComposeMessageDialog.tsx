@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -101,37 +102,37 @@ export function ComposeMessageDialog({ isOpen, onClose, onSend, initialData }: C
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
+      <DialogContent className="max-w-3xl bg-white/95 backdrop-blur-md border border-gray-200/60 shadow-2xl rounded-2xl">
+        <DialogHeader className="border-b border-gray-200/60 pb-4 mb-6">
           <div className="flex items-center justify-between">
-            <DialogTitle>Compose Message</DialogTitle>
+            <DialogTitle className="text-xl font-semibold text-gray-900 tracking-tight">Compose Message</DialogTitle>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleClose}
               disabled={isSending}
-              className="h-6 w-6 p-0"
+              className="h-8 w-8 p-0 rounded-full hover:bg-gray-100 transition-all duration-200"
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           {/* Recipient */}
           <div className="space-y-2">
-            <Label htmlFor="recipient">To</Label>
+            <Label htmlFor="recipient" className="text-sm font-medium text-gray-700 tracking-wide">To</Label>
             <Select value={recipient} onValueChange={setRecipient} disabled={loadingUsers}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white/80 border-gray-200 hover:border-gray-300 focus:border-blue-400 transition-all duration-200 rounded-lg shadow-sm">
                 <SelectValue placeholder={loadingUsers ? "Loading users..." : "Select recipient"} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white/95 backdrop-blur-md border border-gray-200/60 shadow-xl rounded-lg">
                 {users.map((user) => (
-                  <SelectItem key={user.id} value={user.id}>
-                    <div className="flex items-center gap-2">
-                      <span>{user.name}</span>
-                      <span className="text-xs text-gray-500 capitalize">
-                        ({user.role})
+                  <SelectItem key={user.id} value={user.id} className="hover:bg-blue-50/80 transition-colors duration-150">
+                    <div className="flex items-center gap-3">
+                      <span className="font-medium">{user.name}</span>
+                      <span className="text-xs text-gray-500 capitalize bg-gray-100 px-2 py-0.5 rounded-full">
+                        {user.role}
                       </span>
                     </div>
                   </SelectItem>
@@ -142,19 +143,20 @@ export function ComposeMessageDialog({ isOpen, onClose, onSend, initialData }: C
 
           {/* Subject */}
           <div className="space-y-2">
-            <Label htmlFor="subject">Subject</Label>
+            <Label htmlFor="subject" className="text-sm font-medium text-gray-700 tracking-wide">Subject</Label>
             <Input
               id="subject"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="Enter message subject"
               disabled={isSending}
+              className="bg-white/80 border-gray-200 hover:border-gray-300 focus:border-blue-400 transition-all duration-200 rounded-lg shadow-sm"
             />
           </div>
 
           {/* Content */}
           <div className="space-y-2">
-            <Label htmlFor="content">Message</Label>
+            <Label htmlFor="content" className="text-sm font-medium text-gray-700 tracking-wide">Message</Label>
             <Textarea
               id="content"
               value={content}
@@ -162,23 +164,24 @@ export function ComposeMessageDialog({ isOpen, onClose, onSend, initialData }: C
               placeholder="Type your message here..."
               rows={8}
               disabled={isSending}
-              className="resize-none"
+              className="resize-none bg-white/80 border-gray-200 hover:border-gray-300 focus:border-blue-400 transition-all duration-200 rounded-lg shadow-sm font-light leading-relaxed"
             />
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200/60">
             <Button
               variant="outline"
               onClick={handleClose}
               disabled={isSending}
+              className="bg-white/80 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               Cancel
             </Button>
             <Button
               onClick={handleSend}
               disabled={!recipient || !subject || !content || isSending}
-              className="gap-2"
+              className="gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send className="h-4 w-4" />
               {isSending ? 'Sending...' : 'Send Message'}
