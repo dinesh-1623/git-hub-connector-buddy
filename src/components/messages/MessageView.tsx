@@ -1,7 +1,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Reply, Forward, Archive, Trash2 } from 'lucide-react';
+import { Reply, Forward, Archive, Trash2, Clock, User } from 'lucide-react';
 import { Message } from '@/pages/admin/MessagesPage';
 import {
   AlertDialog,
@@ -41,14 +41,18 @@ const getRoleBadgeVariant = (role: string) => {
 
 const formatDateTime = (dateString: string) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  return {
+    date: date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }),
+    time: date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  };
 };
 
 export function MessageView({ message }: MessageViewProps) {
@@ -102,38 +106,60 @@ export function MessageView({ message }: MessageViewProps) {
     // TODO: Remove message from list and update state
   };
 
+  const { date, time } = formatDateTime(message.sent_at);
+
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Message Header with Enhanced Styling */}
       <div className="border-b border-gray-200 bg-gradient-to-r from-white to-gray-50 p-6">
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start justify-between mb-6">
           <div className="flex-1 min-w-0">
-            <h2 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4 line-clamp-2">
               {message.subject}
             </h2>
-            <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-sm font-medium text-gray-900">
-                {message.sender_name}
-              </span>
-              <Badge 
-                variant={getRoleBadgeVariant(message.sender_role)}
-                className="text-xs px-2 py-1 capitalize font-medium shadow-sm"
-              >
-                {message.sender_role}
-              </Badge>
-              <span className="text-sm text-gray-500">
-                {formatDateTime(message.sent_at)}
-              </span>
-              {!message.read && (
-                <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 border-blue-200">
-                  Unread
-                </Badge>
-              )}
+            
+            {/* Enhanced Sender Information */}
+            <div className="bg-white rounded-lg border border-gray-100 p-4 shadow-sm">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
+                  <User className="h-5 w-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-lg font-semibold text-gray-900 truncate">
+                      {message.sender_name}
+                    </span>
+                    <Badge 
+                      variant={getRoleBadgeVariant(message.sender_role)}
+                      className="text-xs px-2.5 py-1 capitalize font-medium shadow-sm"
+                    >
+                      {message.sender_role}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Enhanced Date and Time */}
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Clock className="h-4 w-4 text-gray-400" />
+                <div className="flex items-center gap-1">
+                  <span className="font-medium text-gray-700">{date}</span>
+                  <span className="text-gray-400">at</span>
+                  <span className="font-medium text-gray-700 bg-gray-100 px-2 py-1 rounded-md">
+                    {time}
+                  </span>
+                </div>
+                {!message.read && (
+                  <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 border-blue-200 ml-2">
+                    Unread
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
           
           {/* Enhanced Action Buttons */}
-          <div className="flex items-center gap-2 ml-4 flex-wrap">
+          <div className="flex items-center gap-2 ml-6 flex-wrap">
             <Button
               variant="outline"
               size="sm"
