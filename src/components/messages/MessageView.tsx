@@ -17,7 +17,7 @@ export function MessageView({ message, onMessageDeleted, onReply, onForward }: M
   }
 
   return (
-    <div className="flex flex-col h-full bg-gradient-to-b from-white to-gray-50/30 backdrop-blur-sm">
+    <div className="flex flex-col h-full bg-white">
       <MessageHeader 
         message={message} 
         onMessageDeleted={onMessageDeleted}

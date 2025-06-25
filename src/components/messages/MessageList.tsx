@@ -1,4 +1,3 @@
-
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Message } from '@/pages/admin/MessagesPage';
@@ -39,13 +38,10 @@ const formatTimeAgo = (dateString: string) => {
 export function MessageList({ messages, selectedMessage, onMessageSelect }: MessageListProps) {
   if (messages.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-gray-500 p-8">
-        <div className="text-center space-y-3">
-          <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center shadow-inner">
-            <div className="w-8 h-8 rounded-full bg-white/60"></div>
-          </div>
-          <p className="text-sm font-medium text-gray-600">No messages yet</p>
-          <p className="text-xs text-gray-400 leading-relaxed max-w-xs">
+      <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+        <div className="text-center">
+          <p className="text-sm font-medium">No messages yet</p>
+          <p className="text-xs text-gray-400 mt-1">
             Messages will appear here when you receive them
           </p>
         </div>
@@ -54,54 +50,52 @@ export function MessageList({ messages, selectedMessage, onMessageSelect }: Mess
   }
 
   return (
-    <div className="divide-y divide-gray-100/60">
+    <div className="divide-y divide-gray-100">
       {messages.map((message) => (
         <div
           key={message.id}
           onClick={() => onMessageSelect(message)}
           className={cn(
-            'p-5 cursor-pointer transition-all duration-200 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-indigo-50/30 border-l-2 border-transparent hover:border-blue-200',
-            selectedMessage?.id === message.id && 'bg-gradient-to-r from-blue-50/80 to-indigo-50/50 border-l-blue-500 shadow-sm',
-            !message.read && 'bg-gradient-to-r from-blue-25/60 to-indigo-25/30'
+            'p-4 cursor-pointer hover:bg-gray-50 transition-colors',
+            selectedMessage?.id === message.id && 'bg-blue-50 border-r-2 border-blue-500',
+            !message.read && 'bg-blue-25'
           )}
         >
-          <div className="flex items-start justify-between mb-3">
-            <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="flex items-start justify-between mb-2">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
               <span className={cn(
-                'text-sm font-medium truncate tracking-wide',
-                !message.read && 'font-semibold text-gray-900',
-                message.read && 'text-gray-700'
+                'text-sm font-medium truncate',
+                !message.read && 'font-semibold'
               )}>
                 {message.sender_name}
               </span>
               <Badge 
                 variant={getRoleBadgeVariant(message.sender_role)}
-                className="text-xs px-2 py-1 capitalize font-medium rounded-full shadow-sm"
+                className="text-xs px-1.5 py-0.5 capitalize"
               >
                 {message.sender_role}
               </Badge>
             </div>
-            <span className="text-xs text-gray-500 whitespace-nowrap ml-3 font-light">
+            <span className="text-xs text-gray-500 whitespace-nowrap ml-2">
               {formatTimeAgo(message.sent_at)}
             </span>
           </div>
           
-          <div className="mb-3">
+          <div className="mb-2">
             <p className={cn(
-              'text-sm text-gray-900 truncate tracking-wide',
-              !message.read && 'font-semibold',
-              message.read && 'font-medium'
+              'text-sm text-gray-900 truncate',
+              !message.read && 'font-semibold'
             )}>
               {message.subject}
             </p>
           </div>
           
           <div className="flex items-center justify-between">
-            <p className="text-xs text-gray-600 truncate font-light leading-relaxed">
+            <p className="text-xs text-gray-600 truncate">
               {message.content.substring(0, 80)}...
             </p>
             {!message.read && (
-              <div className="w-2.5 h-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full ml-3 flex-shrink-0 shadow-sm"></div>
+              <div className="w-2 h-2 bg-blue-500 rounded-full ml-2 flex-shrink-0"></div>
             )}
           </div>
         </div>
