@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
@@ -10,6 +9,7 @@ import CoursesPage from './pages/admin/CoursesPage';
 import CourseDetailPage from './pages/admin/CourseDetailPage';
 import ReportsPage from './pages/admin/ReportsPage';
 import SettingsPage from './pages/admin/SettingsPage';
+import { MessagesPage } from './pages/admin/MessagesPage';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BookOpen, AlertCircle } from 'lucide-react';
 import { hasSupabaseConfig } from '@/lib/supabase';
@@ -54,16 +54,6 @@ const SupabaseSetupPage: React.FC = () => {
           </Button>
         </CardContent>
       </Card>
-    </div>
-  );
-};
-
-const MessagesPage: React.FC = () => {
-  console.log('📧 App: Rendering Messages page');
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Messages</h1>
-      <p className="text-muted-foreground">Messages functionality coming soon...</p>
     </div>
   );
 };
