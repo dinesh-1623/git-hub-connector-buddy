@@ -7,17 +7,29 @@ import { MessageContent } from './MessageContent';
 interface MessageViewProps {
   message: Message | null;
   onMessageDeleted?: () => void;
+  onReply?: (message: Message) => void;
+  onForward?: (message: Message) => void;
 }
 
-export function MessageView({ message, onMessageDeleted }: MessageViewProps) {
+export function MessageView({ message, onMessageDeleted, onReply, onForward }: MessageViewProps) {
   if (!message) {
     return <MessageEmptyState />;
   }
 
   return (
     <div className="flex flex-col h-full bg-white">
-      <MessageHeader message={message} onMessageDeleted={onMessageDeleted} />
-      <MessageContent message={message} onMessageDeleted={onMessageDeleted} />
+      <MessageHeader 
+        message={message} 
+        onMessageDeleted={onMessageDeleted}
+        onReply={onReply}
+        onForward={onForward}
+      />
+      <MessageContent 
+        message={message} 
+        onMessageDeleted={onMessageDeleted}
+        onReply={onReply}
+        onForward={onForward}
+      />
     </div>
   );
 }

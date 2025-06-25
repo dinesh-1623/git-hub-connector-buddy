@@ -1,4 +1,3 @@
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal, Reply, Forward, Archive, Trash2 } from 'lucide-react';
@@ -14,6 +13,8 @@ import { useMessageActions } from './MessageActions';
 interface MessageHeaderProps {
   message: Message;
   onMessageDeleted?: () => void;
+  onReply?: (message: Message) => void;
+  onForward?: (message: Message) => void;
 }
 
 const getRoleBadgeVariant = (role: string) => {
@@ -40,10 +41,12 @@ const formatDate = (dateString: string) => {
   });
 };
 
-export function MessageHeader({ message, onMessageDeleted }: MessageHeaderProps) {
+export function MessageHeader({ message, onMessageDeleted, onReply, onForward }: MessageHeaderProps) {
   const { handleReply, handleForward, handleArchive, handleDelete } = useMessageActions({
     message,
-    onMessageDeleted
+    onMessageDeleted,
+    onReply,
+    onForward
   });
 
   return (

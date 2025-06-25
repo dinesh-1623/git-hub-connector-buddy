@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -15,19 +14,24 @@ import { Send, X } from 'lucide-react';
 import { messagesService } from '@/services/messagesService';
 import { toast } from 'sonner';
 
-interface ComposeMessageDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSend: (messageData: { recipient: string; subject: string; content: string }) => void;
-}
-
 interface User {
   id: string;
   name: string;
   role: string;
 }
 
-export function ComposeMessageDialog({ isOpen, onClose, onSend }: ComposeMessageDialogProps) {
+interface ComposeMessageDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSend: (messageData: { recipient: string; subject: string; content: string }) => void;
+  initialData?: {
+    recipient?: string;
+    subject?: string;
+    content?: string;
+  };
+}
+
+export function ComposeMessageDialog({ isOpen, onClose, onSend, initialData }: ComposeMessageDialogProps) {
   const [recipient, setRecipient] = useState('');
   const [subject, setSubject] = useState('');
   const [content, setContent] = useState('');
@@ -41,6 +45,15 @@ export function ComposeMessageDialog({ isOpen, onClose, onSend }: ComposeMessage
       loadUsers();
     }
   }, [isOpen]);
+
+  // Set initial data when provided
+  useEffect(() => {
+    if (initialData) {
+      setRecipient(initialData.recipient || '');
+      setSubject(initialData.subject || '');
+      setContent(initialData.content || '');
+    }
+  }, [initialData]);
 
   const loadUsers = async () => {
     try {

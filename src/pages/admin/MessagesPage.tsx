@@ -29,6 +29,11 @@ export function MessagesPage() {
   const [activeTab, setActiveTab] = useState('inbox');
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
+  const [composeData, setComposeData] = useState<{
+    recipient?: string;
+    subject?: string;
+    content?: string;
+  }>({});
 
   // Load messages on component mount
   useEffect(() => {
@@ -36,6 +41,20 @@ export function MessagesPage() {
       loadMessages();
     }
   }, [user]);
+
+  // Listen for compose events from message actions
+  useEffect(() => {
+    const handleOpenCompose = (event: CustomEvent) => {
+      const { recipient, subject, content } = event.detail;
+      setComposeData({ recipient, subject, content });
+      setIsComposeOpen(true);
+    };
+
+    window.addEventListener('openCompose', handleOpenCompose as EventListener);
+    return () => {
+      window.removeEventListener('openCompose', handleOpenCompose as EventListener);
+    };
+  }, []);
 
   const loadMessages = async () => {
     try {
@@ -72,6 +91,7 @@ export function MessagesPage() {
   };
 
   const handleCompose = () => {
+    setComposeData({});
     setIsComposeOpen(true);
   };
 
@@ -115,6 +135,23 @@ export function MessagesPage() {
     await loadMessages();
     // Clear selected message if it was deleted
     setSelectedMessage(null);
+  };
+
+  const handleReply = (message: Message) => {
+    setComposeData({
+      recipient: message.sender_id,
+      subject: `Re: ${message.subject}`,
+      content: `\n\n--- Original Message ---\nFrom: ${message.sender_name}\nSubject: ${message.subject}\n\n${message.content}`
+    });
+    setIsComposeOpen(true);
+  };
+
+  const handleForward = (message: Message) => {
+    setComposeData({
+      subject: `Fwd: ${message.subject}`,
+      content: `\n\n--- Forwarded Message ---\nFrom: ${message.sender_name}\nTo: You\nSubject: ${message.subject}\nDate: ${message.sent_at}\n\n${message.content}`
+    });
+    setIsComposeOpen(true);
   };
 
   if (loading) {
@@ -194,6 +231,8 @@ export function MessagesPage() {
             <MessageView 
               message={selectedMessage} 
               onMessageDeleted={handleMessageDeleted}
+              onReply={handleReply}
+              onForward={handleForward}
             />
           </div>
         </div>
@@ -204,6 +243,7 @@ export function MessagesPage() {
         isOpen={isComposeOpen} 
         onClose={() => setIsComposeOpen(false)}
         onSend={handleSendMessage}
+        initialData={composeData}
       />
     </div>
   );

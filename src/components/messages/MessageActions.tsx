@@ -6,23 +6,42 @@ import { messagesService } from '@/services/messagesService';
 interface UseMessageActionsProps {
   message: Message;
   onMessageDeleted?: () => void;
+  onReply?: (message: Message) => void;
+  onForward?: (message: Message) => void;
 }
 
-export const useMessageActions = ({ message, onMessageDeleted }: UseMessageActionsProps) => {
+export const useMessageActions = ({ message, onMessageDeleted, onReply, onForward }: UseMessageActionsProps) => {
   const handleReply = () => {
     console.log('Reply to message:', message.id);
-    toast.info(`Reply functionality not yet implemented`, {
-      description: "This feature will be available in a future update"
-    });
-    // TODO: Implement reply functionality with compose dialog
+    if (onReply) {
+      onReply(message);
+    } else {
+      // Open compose with pre-filled data
+      const event = new CustomEvent('openCompose', {
+        detail: {
+          recipient: message.sender_id,
+          subject: `Re: ${message.subject}`,
+          content: `\n\n--- Original Message ---\nFrom: ${message.sender_name}\nSubject: ${message.subject}\n\n${message.content}`
+        }
+      });
+      window.dispatchEvent(event);
+    }
   };
 
   const handleForward = () => {
     console.log('Forward message:', message.id);
-    toast.info("Forward functionality not yet implemented", {
-      description: "This feature will be available in a future update"
-    });
-    // TODO: Implement forward functionality with compose dialog
+    if (onForward) {
+      onForward(message);
+    } else {
+      // Open compose with forwarded content
+      const event = new CustomEvent('openCompose', {
+        detail: {
+          subject: `Fwd: ${message.subject}`,
+          content: `\n\n--- Forwarded Message ---\nFrom: ${message.sender_name}\nTo: You\nSubject: ${message.subject}\nDate: ${message.sent_at}\n\n${message.content}`
+        }
+      });
+      window.dispatchEvent(event);
+    }
   };
 
   const handleArchive = async () => {
