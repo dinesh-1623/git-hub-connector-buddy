@@ -16,9 +16,10 @@ import { Send, X } from 'lucide-react';
 interface ComposeMessageDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  onSend: (messageData: { recipient: string; subject: string; content: string }) => void;
 }
 
-export function ComposeMessageDialog({ isOpen, onClose }: ComposeMessageDialogProps) {
+export function ComposeMessageDialog({ isOpen, onClose, onSend }: ComposeMessageDialogProps) {
   const [recipient, setRecipient] = useState('');
   const [subject, setSubject] = useState('');
   const [content, setContent] = useState('');
@@ -40,7 +41,8 @@ export function ComposeMessageDialog({ isOpen, onClose }: ComposeMessageDialogPr
       content,
     });
 
-    // TODO: Implement actual message sending to Supabase
+    // Call the onSend prop to actually send the message
+    onSend({ recipient, subject, content });
     
     // Reset form and close dialog
     setRecipient('');

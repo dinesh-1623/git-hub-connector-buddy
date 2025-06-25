@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus } from 'lucide-react';
 import { mockMessages } from '@/lib/mockMessagesData';
+import { toast } from 'sonner';
 
 export interface Message {
   id: string;
@@ -25,9 +26,10 @@ export function MessagesPage() {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('inbox');
+  const [messages, setMessages] = useState<Message[]>(mockMessages);
 
-  const inboxMessages = mockMessages.filter(msg => msg.type === 'inbox');
-  const sentMessages = mockMessages.filter(msg => msg.type === 'sent');
+  const inboxMessages = messages.filter(msg => msg.type === 'inbox');
+  const sentMessages = messages.filter(msg => msg.type === 'sent');
 
   const handleMessageSelect = (message: Message) => {
     setSelectedMessage(message);
@@ -35,6 +37,26 @@ export function MessagesPage() {
 
   const handleCompose = () => {
     setIsComposeOpen(true);
+  };
+
+  const handleSendMessage = (messageData: { recipient: string; subject: string; content: string }) => {
+    const newMessage: Message = {
+      id: (messages.length + 1).toString(),
+      sender_id: 'current-user',
+      sender_name: 'You',
+      sender_role: 'teacher',
+      recipient_id: messageData.recipient,
+      subject: messageData.subject,
+      content: messageData.content,
+      sent_at: new Date().toISOString(),
+      read: true,
+      type: 'sent'
+    };
+
+    setMessages(prev => [...prev, newMessage]);
+    toast.success('Message sent successfully!', {
+      description: 'Your message has been delivered to the recipient.'
+    });
   };
 
   return (
@@ -104,7 +126,8 @@ export function MessagesPage() {
       {/* Compose Dialog */}
       <ComposeMessageDialog 
         isOpen={isComposeOpen} 
-        onClose={() => setIsComposeOpen(false)} 
+        onClose={() => setIsComposeOpen(false)}
+        onSend={handleSendMessage}
       />
     </div>
   );
